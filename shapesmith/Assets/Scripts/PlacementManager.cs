@@ -20,51 +20,27 @@ public class PlacementManager : MonoBehaviour {
 			
 			if(hitInfo.transform.position.x % 2 == 0){
 				if(position.x > hitInfo.transform.position.x){
-					if(position.x < 0){
-						position.x = (Mathf.Abs(position.x) + .1f) * -1;
-					}else{
-						position.x = position.x + .1f;
-					}
+					position.x = position.x + .1f;
 				}else{
-					if(position.x < 0){
-						position.x = (Mathf.Abs(position.x) - .1f) * -1;
-					}else{
-						position.x = position.x - .1f;
-					}
+					position.x = position.x - .1f;
 				}
 			}
 			position.x = Mathf.Round(position.x);
 			
 			if(hitInfo.transform.position.y % 2 == 0){
 				if(position.y > hitInfo.transform.position.y){
-					if(position.y < 0){
-						position.y = (Mathf.Abs(position.y) + .1f) * -1;
-					}else{
-						position.y = position.y + .1f;
-					}
+					position.y = position.y + .1f;
 				}else{
-					if(position.y < 0){
-						position.y = (Mathf.Abs(position.y) - .1f) * -1;
-					}else{
-						position.y = position.y - .1f;
-					}
+					position.y = position.y - .1f;
 				}
 			}
 			position.y = Mathf.Round(position.y);
 			
 			if(hitInfo.transform.position.z % 2 == 0){
 				if(position.z > hitInfo.transform.position.z){
-					if(position.z < 0){
-						position.z = (Mathf.Abs(position.z) + .1f) * -1;
-					}else{
-						position.z = position.z + .1f;
-					}
+					position.z = position.z + .1f;
 				}else{
-					if(position.z < 0){
-						position.z = (Mathf.Abs(position.z) - .1f) * -1;
-					}else{
-						position.z = position.z - .1f;
-					}
+					position.z = position.z - .1f;
 				}
 			}
 			position.z = Mathf.Round(position.z);
