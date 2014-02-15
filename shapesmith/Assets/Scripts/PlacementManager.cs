@@ -16,34 +16,11 @@ public class PlacementManager : MonoBehaviour {
 		Physics.Raycast (placementRay, out hitInfo, maxDistance);
 		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, layerMask)) {
 			Vector3 position = hitInfo.point;
-			
-			
-			if(hitInfo.transform.position.x % 2 == 0){
-				if(position.x > hitInfo.transform.position.x){
-					position.x = position.x + .1f;
-				}else{
-					position.x = position.x - .1f;
-				}
-			}
-			position.x = Mathf.Round(position.x);
-			
-			if(hitInfo.transform.position.y % 2 == 0){
-				if(position.y > hitInfo.transform.position.y){
-					position.y = position.y + .1f;
-				}else{
-					position.y = position.y - .1f;
-				}
-			}
-			position.y = Mathf.Round(position.y);
-			
-			if(hitInfo.transform.position.z % 2 == 0){
-				if(position.z > hitInfo.transform.position.z){
-					position.z = position.z + .1f;
-				}else{
-					position.z = position.z - .1f;
-				}
-			}
-			position.z = Mathf.Round(position.z);
+
+			position.x = getCoordinateFromHit(position.x, hitInfo.transform.position.x);
+			position.y = getCoordinateFromHit(position.y, hitInfo.transform.position.y);
+			position.z = getCoordinateFromHit(position.z, hitInfo.transform.position.z);
+
 			//Debug.Log(position + ", " + hitInfo.normal);
 			
 			placeholderObject.transform.position = position;
@@ -56,5 +33,16 @@ public class PlacementManager : MonoBehaviour {
 			
 			//Debug.Log(cube.layer);
 		}
+	}
+
+	float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
+		if(hitCoordinate % 2 == 0){
+			if(positionCoordinate > hitCoordinate){
+				positionCoordinate = positionCoordinate + 0.1f;
+			}else{
+				positionCoordinate = positionCoordinate - 0.1f;
+			}
+		}
+		return Mathf.Round(positionCoordinate);
 	}
 }
