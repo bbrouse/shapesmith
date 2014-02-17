@@ -7,6 +7,8 @@ public class PlacementManager : MonoBehaviour {
 	public float maxDistance;
 	public LayerMask layerMask;
 	public GameObject placeholderObject;
+	private float x, y, z, newX, newY, newZ;
+	private bool allowPlacement = true;
 	
 	void Update () {
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
@@ -21,12 +23,27 @@ public class PlacementManager : MonoBehaviour {
 			position.y = getCoordinateFromHit(position.y, hitInfo.transform.position.y);
 			position.z = getCoordinateFromHit(position.z, hitInfo.transform.position.z);
 
-			//Debug.Log(position + ", " + hitInfo.normal);
-			
-			placeholderObject.transform.position = position;
+			x = position.x;
+			y = position.y;
+			z = position.z;
+			newX = hitInfo.transform.position.x;
+			newY = hitInfo.transform.position.y;
+			newZ = hitInfo.transform.position.z;
+
+			if((hitInfo.transform.collider.bounds.size.Equals(new Vector3(1.0f, 1.0f, 1.0f))) && 
+			   ((x != newX && (y != newY || z != newZ)) || (y != newY && (x != newX || z != newZ)) || (z != newZ && (x != newX || y != newY)))){
+				//We want to not place the placeholder object because we are looking at a cube's corner
+			}else{
+				placeholderObject.transform.position = position;
+				allowPlacement = true;
+			}
+
+			checkPlayerProximity(position);
+
+			//Debug.Log(position + ", " + hitInfo.transform.position);
 		}
-		
-		if (Input.GetMouseButtonDown (0)) {
+
+		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			cube.layer = 8;
 			cube.transform.position = placeholderObject.transform.position;
@@ -35,6 +52,18 @@ public class PlacementManager : MonoBehaviour {
 		}
 	}
 
+	void checkPlayerProximity(Vector3 pos){
+		var hitColliders = Physics.OverlapSphere(pos, .7f);
+		if (hitColliders.Length > 0) {
+			for(int i = 0; i < hitColliders.Length; i++){
+				if(hitColliders[i].gameObject.tag == "Player"){
+					allowPlacement = false;
+					break;
+				}
+			}
+		}
+	}
+	
 	float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
 		if(hitCoordinate % 2 == 0){
 			if(positionCoordinate > hitCoordinate){
