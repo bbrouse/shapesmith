@@ -7,9 +7,14 @@ public class PlacementManager : MonoBehaviour {
 	public float maxDistance;
 	public LayerMask layerMask;
 	public GameObject placeholderObject;
+
+	public GameObject[] shapesArray = new GameObject[6];
+	public GameObject[] tetrominoArray = new GameObject[5];
 	private bool allowPlacement = true;
-	
+	private Vector3 startPos;
+
 	void Update () {
+		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
 		
@@ -18,41 +23,47 @@ public class PlacementManager : MonoBehaviour {
 		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, layerMask)) {
 			Vector3 position = hitInfo.point;
 
-			position.x = getCoordinateFromHit(position.x, hitInfo.transform.position.x);
-			position.y = getCoordinateFromHit(position.y, hitInfo.transform.position.y);
-			position.z = getCoordinateFromHit(position.z, hitInfo.transform.position.z);
+			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x);
+			position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y);
+			position.z = getCoordinateFromHit(position.z, hitInfo.collider.transform.position.z);
 
-			if(hitInfo.transform.collider.bounds.size.Equals(new Vector3(1.0f, 1.0f, 1.0f)) && isCornerHit(position, hitInfo.transform.position)){
+			if(hitInfo.collider.bounds.size.Equals(new Vector3(1.0f, 1.0f, 1.0f)) && isCornerHit(position, hitInfo.collider.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
+			}else if(!allowPlacement){
+				//We don't want to allow placing objects over top of the player or other cubes
 			}else{
-				placeholderObject.transform.position = position;
+				//placeholderObject.transform.position = position;
+				shapesArray[1].transform.parent.gameObject.transform.position = position;
 				allowPlacement = true;
 			}
 
-			checkPlayerProximity(position);
+			for(int i=0; i<shapesArray[1].gameObject.transform.parent.childCount; i++){
+				checkObjectProximity(shapesArray[1].gameObject.transform.parent.GetChild(i).position);
+			}
 
 			//Debug.Log(position + ", " + hitInfo.transform.position);
 		}
 
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
-			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			/*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			cube.layer = 8;
-			cube.transform.position = placeholderObject.transform.position;
-			
-			//Debug.Log(cube.layer);
+			//cube.transform.position = placeholderObject.transform.position;
+			cube.transform.position = shapesArray[1].transform.parent.gameObject.transform.position;*/
+
+			Instantiate(tetrominoArray[0], shapesArray[1].transform.parent.gameObject.transform.position, Quaternion.identity);
 		}
 	}
 
-	private void checkPlayerProximity(Vector3 pos){
-		var hitColliders = Physics.OverlapSphere(pos, .7f);
+	private bool checkObjectProximity(Vector3 pos){
+		var hitColliders = Physics.OverlapSphere(pos, .4f);
 		if (hitColliders.Length > 0) {
 			for(int i = 0; i < hitColliders.Length; i++){
-				if(hitColliders[i].gameObject.tag == "Player"){
+				if(hitColliders[i].gameObject.tag == "Player" || hitColliders[i].gameObject.tag == "Block"){
 					allowPlacement = false;
-					break;
 				}
 			}
 		}
+		return allowPlacement;
 	}
 	
 	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
