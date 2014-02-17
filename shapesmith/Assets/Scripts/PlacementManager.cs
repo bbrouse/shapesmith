@@ -22,7 +22,7 @@ public class PlacementManager : MonoBehaviour {
 			position.y = getCoordinateFromHit(position.y, hitInfo.transform.position.y);
 			position.z = getCoordinateFromHit(position.z, hitInfo.transform.position.z);
 
-			if(hitInfo.transform.tag == "block" && isCornerHit(position, hitInfo.transform.position)){
+			if(hitInfo.transform.collider.bounds.size.Equals(new Vector3(1.0f, 1.0f, 1.0f)) && isCornerHit(position, hitInfo.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
 			}else{
 				placeholderObject.transform.position = position;
@@ -37,7 +37,6 @@ public class PlacementManager : MonoBehaviour {
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			cube.layer = 8;
-			cube.tag = "block";
 			cube.transform.position = placeholderObject.transform.position;
 			
 			//Debug.Log(cube.layer);
