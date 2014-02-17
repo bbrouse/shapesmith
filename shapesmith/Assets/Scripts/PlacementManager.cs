@@ -23,16 +23,8 @@ public class PlacementManager : MonoBehaviour {
 			position.y = getCoordinateFromHit(position.y, hitInfo.transform.position.y);
 			position.z = getCoordinateFromHit(position.z, hitInfo.transform.position.z);
 
-			x = position.x;
-			y = position.y;
-			z = position.z;
-			newX = hitInfo.transform.position.x;
-			newY = hitInfo.transform.position.y;
-			newZ = hitInfo.transform.position.z;
-
-			if((hitInfo.transform.collider.bounds.size.Equals(new Vector3(1.0f, 1.0f, 1.0f))) && 
-			   ((x != newX && (y != newY || z != newZ)) || (y != newY && (x != newX || z != newZ)) || (z != newZ && (x != newX || y != newY)))){
-				//We want to not place the placeholder object because we are looking at a cube's corner
+			if(hitInfo.transform.tag == "block" && isCornerHit(position, hitInfo.transform.position)){
+				//We dont' want to place the placeholder object because we are looking at a cube's corner
 			}else{
 				placeholderObject.transform.position = position;
 				allowPlacement = true;
@@ -46,13 +38,14 @@ public class PlacementManager : MonoBehaviour {
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
 			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			cube.layer = 8;
+			cube.tag = "block";
 			cube.transform.position = placeholderObject.transform.position;
 			
 			//Debug.Log(cube.layer);
 		}
 	}
 
-	void checkPlayerProximity(Vector3 pos){
+	private void checkPlayerProximity(Vector3 pos){
 		var hitColliders = Physics.OverlapSphere(pos, .7f);
 		if (hitColliders.Length > 0) {
 			for(int i = 0; i < hitColliders.Length; i++){
@@ -64,7 +57,7 @@ public class PlacementManager : MonoBehaviour {
 		}
 	}
 	
-	float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
+	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
 		if(hitCoordinate % 2 == 0){
 			if(positionCoordinate > hitCoordinate){
 				positionCoordinate = positionCoordinate + 0.1f;
@@ -74,4 +67,15 @@ public class PlacementManager : MonoBehaviour {
 		}
 		return Mathf.Round(positionCoordinate);
 	}
+
+	private bool isCornerHit(Vector3 placementPosition, Vector3 hitObjectPosition){
+		x = placementPosition.x;
+		y = placementPosition.y;
+		z = placementPosition.z;
+		newX = hitObjectPosition.x;
+		newY = hitObjectPosition.y;
+		newZ = hitObjectPosition.z;
+		return ((x != newX && y != newY) || (y != newY && z != newZ) || (x != newX && z != newZ));
+	}
+
 }
