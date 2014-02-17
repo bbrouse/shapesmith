@@ -7,7 +7,6 @@ public class PlacementManager : MonoBehaviour {
 	public float maxDistance;
 	public LayerMask layerMask;
 	public GameObject placeholderObject;
-	private float x, y, z, newX, newY, newZ;
 	private bool allowPlacement = true;
 	
 	void Update () {
@@ -69,12 +68,12 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	private bool isCornerHit(Vector3 placementPosition, Vector3 hitObjectPosition){
-		x = placementPosition.x;
-		y = placementPosition.y;
-		z = placementPosition.z;
-		newX = hitObjectPosition.x;
-		newY = hitObjectPosition.y;
-		newZ = hitObjectPosition.z;
+		float x = placementPosition.x;
+		float y = placementPosition.y;
+		float z = placementPosition.z;
+		float newX = hitObjectPosition.x;
+		float newY = hitObjectPosition.y;
+		float newZ = hitObjectPosition.z;
 		return ((x != newX && y != newY) || (y != newY && z != newZ) || (x != newX && z != newZ));
 	}
 
