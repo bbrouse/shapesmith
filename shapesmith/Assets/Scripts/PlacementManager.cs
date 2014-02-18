@@ -6,14 +6,36 @@ public class PlacementManager : MonoBehaviour {
 	public GameObject origin;
 	public float maxDistance;
 	public LayerMask layerMask;
-	public GameObject placeholderObject;
-
-	public GameObject[] shapesArray = new GameObject[6];
+	
+	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
+	private int currentShape = 0;
 	private bool allowPlacement = true;
-	private Vector3 startPos;
+	private Vector3[] startPos = new Vector3[5];
+
+	void Start(){
+		for (int i=0; i<startPos.Length; i++) {
+			startPos[i] = shapesArray[i].gameObject.transform.position;
+		}
+	}
 
 	void Update () {
+		if (Input.GetKeyDown ("tab")) {
+			switchTetromino();
+		}
+
+		if (Input.GetKeyDown ("1")) {
+			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
+		}
+
+		if (Input.GetKeyDown ("2")) {
+			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(90, 0, 0);
+		}
+
+		if (Input.GetKeyDown ("3")) {
+			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
+		}
+
 		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
@@ -23,34 +45,31 @@ public class PlacementManager : MonoBehaviour {
 		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, layerMask)) {
 			Vector3 position = hitInfo.point;
 
-			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x);
-			position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y);
-			position.z = getCoordinateFromHit(position.z, hitInfo.collider.transform.position.z);
+			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x, false);
+			if(hitInfo.collider.gameObject.tag == "Block"){
+				position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y, true);
+			}else{
+				position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y, false);
+			}
+			position.z = getCoordinateFromHit(position.z, hitInfo.collider.transform.position.z, false);
 
-			if(hitInfo.collider.bounds.size.Equals(new Vector3(1.0f, 1.0f, 1.0f)) && isCornerHit(position, hitInfo.collider.transform.position)){
+			if(hitInfo.collider.GetType() == typeof(BoxCollider) && isCornerHit(position, hitInfo.collider.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or other cubes
 			}else{
 				//placeholderObject.transform.position = position;
-				shapesArray[1].transform.parent.gameObject.transform.position = position;
+				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 				allowPlacement = true;
 			}
 
-			for(int i=0; i<shapesArray[1].gameObject.transform.parent.childCount; i++){
-				checkObjectProximity(shapesArray[1].gameObject.transform.parent.GetChild(i).position);
+			for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
+				checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
 			}
-
-			//Debug.Log(position + ", " + hitInfo.transform.position);
 		}
 
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
-			/*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			cube.layer = 8;
-			//cube.transform.position = placeholderObject.transform.position;
-			cube.transform.position = shapesArray[1].transform.parent.gameObject.transform.position;*/
-
-			Instantiate(tetrominoArray[0], shapesArray[1].transform.parent.gameObject.transform.position, Quaternion.identity);
+			Instantiate(tetrominoArray[currentShape], shapesArray[currentShape].transform.parent.gameObject.transform.position, shapesArray[currentShape].transform.parent.gameObject.transform.rotation);
 		}
 	}
 
@@ -66,7 +85,9 @@ public class PlacementManager : MonoBehaviour {
 		return allowPlacement;
 	}
 	
-	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
+	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate, bool block){
+		if(block) hitCoordinate = Mathf.Round (hitCoordinate);
+
 		if(hitCoordinate % 2 == 0){
 			if(positionCoordinate > hitCoordinate){
 				positionCoordinate = positionCoordinate + 0.1f;
@@ -81,10 +102,18 @@ public class PlacementManager : MonoBehaviour {
 		float x = placementPosition.x;
 		float y = placementPosition.y;
 		float z = placementPosition.z;
-		float newX = hitObjectPosition.x;
-		float newY = hitObjectPosition.y;
-		float newZ = hitObjectPosition.z;
+		float newX = Mathf.Round(hitObjectPosition.x);
+		float newY = Mathf.Round(hitObjectPosition.y);
+		float newZ = Mathf.Round(hitObjectPosition.z);
 		return ((x != newX && y != newY) || (y != newY && z != newZ) || (x != newX && z != newZ));
 	}
 
+	private void switchTetromino(){
+		shapesArray[currentShape].gameObject.transform.parent.transform.position = startPos[currentShape];
+		if (currentShape < 4) {
+			currentShape++;
+		} else {
+			currentShape = 0;
+		}
+	}
 }
