@@ -6,9 +6,11 @@ public class PlacementManager : MonoBehaviour {
 	public GameObject origin;
 	public float maxDistance;
 	public LayerMask layerMask;
-	
+
+	public GameController gameController;
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
+
 	private int currentShape = 0;
 	private bool allowPlacement = true;
 	private Vector3[] startPos = new Vector3[5];
@@ -57,7 +59,7 @@ public class PlacementManager : MonoBehaviour {
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				for(int i=0; i<4; i++){
-					while(!checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
+					while(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
 						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(Vector3.up * 1, Space.World);
 					}
 				}
@@ -66,7 +68,7 @@ public class PlacementManager : MonoBehaviour {
 			}
 
 			for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
-				allowPlacement = checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
+				allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
 				if(!allowPlacement) break;
 			}
 		}
@@ -74,19 +76,6 @@ public class PlacementManager : MonoBehaviour {
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
 			Instantiate(tetrominoArray[currentShape], shapesArray[currentShape].transform.parent.gameObject.transform.position, shapesArray[currentShape].transform.parent.gameObject.transform.rotation);
 		}
-	}
-
-	private bool checkObjectProximity(Vector3 pos){
-		var hitColliders = Physics.OverlapSphere(pos, .4f);
-		if (hitColliders.Length > 0) {
-			return false;
-			/*for (int i = 0; i < hitColliders.Length; i++) {
-				if (hitColliders [i].gameObject.tag == "Player" || hitColliders [i].gameObject.tag == "Block") {
-					return false;
-				}
-			}*/
-		}
-		return true;
 	}
 	
 	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
