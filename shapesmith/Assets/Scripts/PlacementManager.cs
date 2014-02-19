@@ -45,26 +45,29 @@ public class PlacementManager : MonoBehaviour {
 		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, layerMask)) {
 			Vector3 position = hitInfo.point;
 
-			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x, false);
-			if(hitInfo.collider.gameObject.tag == "Block"){
-				position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y, true);
-			}else{
-				position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y, false);
-			}
-			position.z = getCoordinateFromHit(position.z, hitInfo.collider.transform.position.z, false);
+			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x);
+			position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y);
+			position.z = getCoordinateFromHit(position.z, hitInfo.collider.transform.position.z);
 
 			if(hitInfo.collider.GetType() == typeof(BoxCollider) && isCornerHit(position, hitInfo.collider.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or other cubes
 			}else{
-				//placeholderObject.transform.position = position;
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
+
+				for(int i=0; i<4; i++){
+					while(!checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
+						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(Vector3.up * 1, Space.World);
+					}
+				}
+
 				allowPlacement = true;
 			}
 
 			for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
-				checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
+				allowPlacement = checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
+				if(!allowPlacement) break;
 			}
 		}
 
@@ -76,17 +79,17 @@ public class PlacementManager : MonoBehaviour {
 	private bool checkObjectProximity(Vector3 pos){
 		var hitColliders = Physics.OverlapSphere(pos, .4f);
 		if (hitColliders.Length > 0) {
-			for(int i = 0; i < hitColliders.Length; i++){
-				if(hitColliders[i].gameObject.tag == "Player" || hitColliders[i].gameObject.tag == "Block"){
-					allowPlacement = false;
+			return false;
+			/*for (int i = 0; i < hitColliders.Length; i++) {
+				if (hitColliders [i].gameObject.tag == "Player" || hitColliders [i].gameObject.tag == "Block") {
+					return false;
 				}
-			}
+			}*/
 		}
-		return allowPlacement;
+		return true;
 	}
 	
-	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate, bool block){
-		if(block) hitCoordinate = Mathf.Round (hitCoordinate);
+	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
 
 		if(hitCoordinate % 2 == 0){
 			if(positionCoordinate > hitCoordinate){
