@@ -2,8 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlacementManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlacementManager.cs" Line="39" Column="19" />
-      <File FileName="Assets\Scripts\PlacementManager.cs" Line="80" Column="1" />
+      <File FileName="Assets\Scripts\PlacementManager.cs" Line="60" Column="202" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
