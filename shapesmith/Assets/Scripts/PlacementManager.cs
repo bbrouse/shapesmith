@@ -54,7 +54,7 @@ public class PlacementManager : MonoBehaviour {
 			if(hitInfo.collider.GetType() == typeof(BoxCollider) && isCornerHit(position, hitInfo.collider.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
 			}else if(!allowPlacement){
-				//We don't want to allow placing objects over top of the player or other cubes
+				//We don't want to allow placing objects over top of the player or cubes
 			}else{
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
