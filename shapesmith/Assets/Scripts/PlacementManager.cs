@@ -54,17 +54,27 @@ public class PlacementManager : MonoBehaviour {
 			if(hitInfo.collider.GetType() == typeof(BoxCollider) && isCornerHit(position, hitInfo.collider.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
 			}else if(!allowPlacement){
-				//We don't want to allow placing objects over top of the player or other cubes
+				//We don't want to allow placing objects over top of the player or cubes
 			}else{
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
-				for(int i=0; i<4; i++){
-					while(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
-						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(Vector3.up * 1, Space.World);
+				allowPlacement = false;
+
+				while(!allowPlacement){
+					for(int i=0; i<4; i++){
+						while(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
+							shapesArray[currentShape].transform.parent.gameObject.transform.Translate(Vector3.up * 1, Space.World);
+						}
+					}
+					
+					for(int i=0; i<4; i++){
+						if(gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position)){
+							if(i == 3) allowPlacement = true;
+						}else{
+							break;
+						}
 					}
 				}
-
-				allowPlacement = true;
 			}
 
 			for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){

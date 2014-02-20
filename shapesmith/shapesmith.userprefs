@@ -2,8 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlacementManager.cs">
     <Files>
+<<<<<<< HEAD
+      <File FileName="Assets\Scripts\PlacementManager.cs" Line="122" Column="1" />
+      <File FileName="Assets\Scripts\PlacementManager.cs" Line="74" Column="14" />
+=======
       <File FileName="Assets\Scripts\PlacementManager.cs" Line="4" Column="48" />
       <File FileName="Assets\Scripts\GameController.cs" Line="16" Column="1" />
+>>>>>>> 41b1305c9dd9e61094d1374be2d691dfaa5c60e3
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
