@@ -60,10 +60,18 @@ public class PlacementManager : MonoBehaviour {
 
 				allowPlacement = false;
 
+				Vector3 translateDirection;
+
+				if(hitInfo.collider.tag != "Roof"){
+					translateDirection = Vector3.up;
+				}else{
+					translateDirection = Vector3.down;
+				}
+
 				while(!allowPlacement){
 					for(int i=0; i<4; i++){
 						while(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
-							shapesArray[currentShape].transform.parent.gameObject.transform.Translate(Vector3.up * 1, Space.World);
+							shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection * 1, Space.World);
 						}
 					}
 					
