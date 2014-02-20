@@ -89,6 +89,9 @@ public class PlacementManager : MonoBehaviour {
 				allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
 				if(!allowPlacement) break;
 			}
+		}else{
+			allowPlacement = false;
+			shapesArray[currentShape].transform.parent.gameObject.transform.position = startPos[currentShape];
 		}
 
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
