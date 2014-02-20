@@ -11,7 +11,7 @@ public class PlacementManager : MonoBehaviour {
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 
-	private int currentShape = 0;
+	public int currentShape = 0;
 	private bool allowPlacement = true;
 	private Vector3[] startPos = new Vector3[5];
 
@@ -22,22 +22,6 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown ("tab")) {
-			switchTetromino();
-		}
-
-		if (Input.GetKeyDown ("1")) {
-			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
-		}
-
-		if (Input.GetKeyDown ("2")) {
-			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(90, 0, 0);
-		}
-
-		if (Input.GetKeyDown ("3")) {
-			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
-		}
-
 		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
@@ -121,7 +105,7 @@ public class PlacementManager : MonoBehaviour {
 		return ((x != newX && y != newY) || (y != newY && z != newZ) || (x != newX && z != newZ));
 	}
 
-	private void switchTetromino(){
+	public void switchTetromino(){
 		shapesArray[currentShape].gameObject.transform.parent.transform.position = startPos[currentShape];
 		if (currentShape < 4) {
 			currentShape++;
