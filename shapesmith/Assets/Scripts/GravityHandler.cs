@@ -6,6 +6,7 @@ public class GravityHandler : MonoBehaviour {
 	
 	public GameObject[] childCubes = new GameObject[4];
 	public LayerMask environmentMask;
+	public bool isMoving = false;
 	
 	private GameController gameController;
 	private float raycastDistance = 0.6f; //ray that looks under a cube
@@ -22,15 +23,8 @@ public class GravityHandler : MonoBehaviour {
 		InvokeRepeating("gravity", fallDelay, fallDelay);
 	}
 	
-	/*void updatePosition(){
-		if (!hitEnvironment) {
-			Invoke ("gravity", .001f);
-		} else {
-			InvokeRepeating("gravity", 2f, 5);
-		}
-	}*/
-	
 	void gravity(){
+		isMoving = false;
 		for (int i = 0; i < 4; i++) {
 			//all child cubes check if there's anything directly under them
 			GameObject origin = childCubes[i];
@@ -53,6 +47,7 @@ public class GravityHandler : MonoBehaviour {
 		
 		//if we didn't hit anything, move position down
 		if (!hitEnvironment) {
+			isMoving = true;
 			transform.position += new Vector3 (0, -1, 0);
 		}
 	}
