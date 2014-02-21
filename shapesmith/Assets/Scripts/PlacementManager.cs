@@ -6,10 +6,12 @@ public class PlacementManager : MonoBehaviour {
 	public GameObject origin;
 	public float maxDistance;
 	public LayerMask layerMask;
-	
+
+	public GameController gameController;
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
-	private int currentShape = 0;
+
+	public int currentShape = 0;
 	private bool allowPlacement = true;
 	private Vector3[] startPos = new Vector3[5];
 
@@ -20,22 +22,6 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown ("tab")) {
-			switchTetromino();
-		}
-
-		if (Input.GetKeyDown ("1")) {
-			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
-		}
-
-		if (Input.GetKeyDown ("2")) {
-			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(90, 0, 0);
-		}
-
-		if (Input.GetKeyDown ("3")) {
-			shapesArray[currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
-		}
-
 		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
@@ -51,42 +37,54 @@ public class PlacementManager : MonoBehaviour {
 
 			if(hitInfo.collider.GetType() == typeof(BoxCollider) && isCornerHit(position, hitInfo.collider.transform.position)){
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
+				//We also want to reset the placeholder object if it gets 'stuck' in the last placed object
+				if(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.gameObject.transform.position)){
+					shapesArray[currentShape].gameObject.transform.parent.gameObject.transform.position = startPos[currentShape];
+				}
 			}else if(!allowPlacement){
-				//We don't want to allow placing objects over top of the player or other cubes
+				//We don't want to allow placing objects over top of the player or cubes
 			}else{
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
-				for(int i=0; i<4; i++){
-					while(!checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
-						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(Vector3.up * 1, Space.World);
-					}
+				allowPlacement = false;
+
+				Vector3 translateDirection;
+
+				if(hitInfo.collider.tag != "Roof"){
+					translateDirection = Vector3.up;
+				}else{
+					translateDirection = Vector3.down;
 				}
 
-				allowPlacement = true;
+				while(!allowPlacement){
+					for(int i=0; i<4; i++){
+						while(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position) || Mathf.Round(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position.y) < 0){
+							shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection * 1, Space.World);
+						}
+					}
+					
+					for(int i=0; i<4; i++){
+						if(gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position)){
+							if(i == 3) allowPlacement = true;
+						}else{
+							break;
+						}
+					}
+				}
 			}
 
 			for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
-				allowPlacement = checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
+				allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
 				if(!allowPlacement) break;
 			}
+		}else{
+			allowPlacement = false;
+			shapesArray[currentShape].transform.parent.gameObject.transform.position = startPos[currentShape];
 		}
 
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
 			Instantiate(tetrominoArray[currentShape], shapesArray[currentShape].transform.parent.gameObject.transform.position, shapesArray[currentShape].transform.parent.gameObject.transform.rotation);
 		}
-	}
-
-	private bool checkObjectProximity(Vector3 pos){
-		var hitColliders = Physics.OverlapSphere(pos, .4f);
-		if (hitColliders.Length > 0) {
-			return false;
-			/*for (int i = 0; i < hitColliders.Length; i++) {
-				if (hitColliders [i].gameObject.tag == "Player" || hitColliders [i].gameObject.tag == "Block") {
-					return false;
-				}
-			}*/
-		}
-		return true;
 	}
 	
 	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
@@ -111,7 +109,7 @@ public class PlacementManager : MonoBehaviour {
 		return ((x != newX && y != newY) || (y != newY && z != newZ) || (x != newX && z != newZ));
 	}
 
-	private void switchTetromino(){
+	public void switchTetromino(){
 		shapesArray[currentShape].gameObject.transform.parent.transform.position = startPos[currentShape];
 		if (currentShape < 4) {
 			currentShape++;
