@@ -44,6 +44,7 @@ public class PlacementManager : MonoBehaviour {
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
+				position.y += .025f;
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				allowPlacement = false;
