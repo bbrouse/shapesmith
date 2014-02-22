@@ -12,6 +12,9 @@ public class PauseHandler : MonoBehaviour {
 			cursorController.toggleCursorLock ();
 			paused = !paused;
 		}
+		
+		if (Input.GetMouseButtonDown (0) && !paused)
+			Screen.lockCursor = true;
 	}
 	
 	void OnGUI()
