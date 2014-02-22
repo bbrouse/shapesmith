@@ -35,6 +35,10 @@ public class PauseHandler : MonoBehaviour {
 			if(GUILayout.Button("Toggle Debug Mode")){
 				gameController.debugMode = !gameController.debugMode;
 			}
+
+			if(GUILayout.Button("Restart Level")){
+				Application.LoadLevel("main");
+			}
 		}
 	}
 	
