@@ -2,12 +2,16 @@
 using System.Collections;
 
 public class GameController : MonoBehaviour {
-
+	public bool debugMode;
 	public float tetrominoFallDelay;
 	public PlacementManager placementManager;
 
+	void Start(){
+		debugMode = false;
+	}
+
 	void Update(){
-		if (Input.GetKeyDown ("tab")) {
+		if (Input.GetKeyDown ("tab") && debugMode) {
 			placementManager.switchTetromino();
 		}
 		
