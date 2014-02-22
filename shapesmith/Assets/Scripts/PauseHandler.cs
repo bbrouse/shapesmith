@@ -4,8 +4,7 @@ using System.Collections;
 public class PauseHandler : MonoBehaviour {
 	public HideAndLockCursor cursorController;
 	public GameController gameController;
-
-	private bool paused = false;
+	public bool paused = false;
 	
 	void Update()
 	{

@@ -7,6 +7,7 @@ public class PlacementManager : MonoBehaviour {
 	public float maxDistance;
 	public LayerMask layerMask;
 	public GameController gameController;
+	public PauseHandler pauseHandler;
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 	public int currentShape = 0;
@@ -133,13 +134,15 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	private void randomizeTetromino(){
-		int rand = Random.Range (0, 5);
-		while (rand == currentShape) {
-			rand = Random.Range (0, 5);
-		}
+		if(!pauseHandler.paused){
+			int rand = Random.Range (0, 5);
+			while (rand == currentShape) {
+				rand = Random.Range (0, 5);
+			}
 
-		resetTetromino ();
-		currentShape = rand;
+			resetTetromino ();
+			currentShape = rand;
+		}
 	}
 
 	private void resetTetromino(){
