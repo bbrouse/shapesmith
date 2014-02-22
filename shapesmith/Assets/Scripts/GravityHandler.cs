@@ -6,6 +6,7 @@ public class GravityHandler : MonoBehaviour {
 	
 	public GameObject[] childCubes = new GameObject[4];
 	public LayerMask environmentMask;
+	public LayerMask tetrominoMask;
 	public bool isMoving = false;
 	public RowHandler rowHandler;
 	
@@ -26,26 +27,28 @@ public class GravityHandler : MonoBehaviour {
 	
 	void gravity(){
 		for (int i = 0; i < 4; i++) {
-			//all child cubes check if there's anything directly under them
-			GameObject origin = childCubes[i];
-			
-			Ray gravityRay = new Ray (origin.transform.position, -Vector3.up);
-			RaycastHit hitInfo;
-			if (Physics.Raycast (gravityRay, out hitInfo, raycastDistance, environmentMask)) {
-				//check that the discovered object is not a sibling cube
-				if(!childCubes.Contains(hitInfo.transform.gameObject)){
-					//stop moving now
-					hitEnvironment = true;
-					isMoving = false;
-
-					//since we're stopped, let the rowHandler handle row completions
-					rowHandler.checkCompletesRow(childCubes);
-					break;
+			if(!hitEnvironment){
+				//all child cubes check if there's anything directly under them
+				GameObject origin = childCubes[i];
+				
+				Ray gravityRay = new Ray (origin.transform.position, -Vector3.up);
+				RaycastHit hitInfo;
+				if (Physics.Raycast (gravityRay, out hitInfo, raycastDistance, environmentMask | tetrominoMask)) {
+					//check that the discovered object is not a sibling cube
+					if(!childCubes.Contains(hitInfo.transform.gameObject)){
+						//stop moving now
+						hitEnvironment = true;
+						isMoving = false;
+						
+						//since we're stopped, let the rowHandler handle row completions
+						rowHandler.checkCompletesRow(childCubes);
+						break;
+					}
 				}
-			}
-			
-			if(i == 3){
-				hitEnvironment = false;
+				
+				if(i == 3){
+					hitEnvironment = false;
+				}
 			}
 		}
 		
