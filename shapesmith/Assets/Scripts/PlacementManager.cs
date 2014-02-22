@@ -7,22 +7,36 @@ public class PlacementManager : MonoBehaviour {
 	public float maxDistance;
 	public LayerMask environmentMask;
 	public LayerMask tetrominoMask;
-
 	public GameController gameController;
+	public PauseHandler pauseHandler;
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
-
 	public int currentShape = 0;
+
 	private bool allowPlacement = true;
 	private Vector3[] startPos = new Vector3[5];
+	private Quaternion[] startRot = new Quaternion[5];
+	private bool randomizing = false;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
 			startPos[i] = shapesArray[i].gameObject.transform.position;
+			startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
 	}
 
 	void Update () {
+
+		if (!gameController.debugMode && !randomizing) {
+			randomizing = true;
+			InvokeRepeating ("randomizeTetromino", 7.5f, 7.5f);
+		}
+
+		if (gameController.debugMode) {
+			randomizing = false;
+			CancelInvoke("randomizeTetromino");
+		}
+
 		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
@@ -40,11 +54,12 @@ public class PlacementManager : MonoBehaviour {
 				//We dont' want to place the placeholder object because we are looking at a cube's corner
 				//We also want to reset the placeholder object if it gets 'stuck' in the last placed object
 				if(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.gameObject.transform.position)){
-					shapesArray[currentShape].gameObject.transform.parent.gameObject.transform.position = startPos[currentShape];
+					resetTetromino ();
 				}
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
+				position.y += .025f;
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				allowPlacement = false;
@@ -80,7 +95,7 @@ public class PlacementManager : MonoBehaviour {
 			}
 		}else{
 			allowPlacement = false;
-			shapesArray[currentShape].transform.parent.gameObject.transform.position = startPos[currentShape];
+			resetTetromino ();
 		}
 
 		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
@@ -111,11 +126,28 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	public void switchTetromino(){
-		shapesArray[currentShape].gameObject.transform.parent.transform.position = startPos[currentShape];
+		resetTetromino ();
 		if (currentShape < 4) {
 			currentShape++;
 		} else {
 			currentShape = 0;
 		}
+	}
+
+	private void randomizeTetromino(){
+		if(!pauseHandler.paused){
+			int rand = Random.Range (0, 5);
+			while (rand == currentShape) {
+				rand = Random.Range (0, 5);
+			}
+
+			resetTetromino ();
+			currentShape = rand;
+		}
+	}
+
+	private void resetTetromino(){
+		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
+		shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
 	}
 }
