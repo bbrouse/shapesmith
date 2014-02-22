@@ -20,6 +20,13 @@ public class PauseHandler : MonoBehaviour {
 		if(paused)
 		{
 			GUILayout.Label("Paused!");
+
+			if(gameController.debugMode){
+				GUILayout.Label("Debug Mode: On");
+			}else{
+				GUILayout.Label("Debug Mode: Off");
+			}
+
 			if(GUILayout.Button("Resume")){
 				cursorController.toggleCursorLock();
 				paused = !paused;
@@ -27,7 +34,6 @@ public class PauseHandler : MonoBehaviour {
 
 			if(GUILayout.Button("Toggle Debug Mode")){
 				gameController.debugMode = !gameController.debugMode;
-				Debug.Log (gameController.debugMode);
 			}
 		}
 	}
