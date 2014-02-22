@@ -11,7 +11,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Input.GetKeyDown ("tab")) {
+		if (Input.GetKeyDown ("tab") && debugMode) {
 			placementManager.switchTetromino();
 		}
 		
