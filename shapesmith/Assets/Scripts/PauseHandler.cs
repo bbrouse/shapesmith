@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PauseHandler : MonoBehaviour {
 	public HideAndLockCursor cursorController;
+	public GameController gameController;
 
 	private bool paused = false;
 	
@@ -18,10 +19,15 @@ public class PauseHandler : MonoBehaviour {
 	{
 		if(paused)
 		{
-			GUILayout.Label("Game is paused!");
-			if(GUILayout.Button("Click me to unpause")){
+			GUILayout.Label("Paused!");
+			if(GUILayout.Button("Resume")){
 				cursorController.toggleCursorLock();
 				paused = !paused;
+			}
+
+			if(GUILayout.Button("Toggle Debug Mode")){
+				gameController.debugMode = !gameController.debugMode;
+				Debug.Log (gameController.debugMode);
 			}
 		}
 	}
