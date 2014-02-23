@@ -21,7 +21,6 @@ public class GravityHandler : MonoBehaviour {
 		fallDelay = gameController.tetrominoFallDelay;
 		
 		//update position once every fall delay
-		//InvokeRepeating("updatePosition", fallDelay, fallDelay);
 		InvokeRepeating("gravity", fallDelay, fallDelay);
 	}
 	
@@ -61,21 +60,13 @@ public class GravityHandler : MonoBehaviour {
 		}
 	}
 
+	//let neighboring tetros know that we're moving so they can start checking again
 	private void alertNeighbors(){
 		Collider[] neighbors = Physics.OverlapSphere (transform.position, 3.0f, tetrominoMask);
 		for (int i = 0; i < neighbors.Length; i++) {
 			GameObject neighbor_tetromino = neighbors[i].gameObject.transform.parent.gameObject;
 			neighbor_tetromino.GetComponent<GravityHandler>().enableGravityCheck();
 		}
-	}
-	
-	/*
-	 * Until I think of a better way to start checking again
-	 * once some cubes were deleted as a result of a row completion,
-	 * I'll go with this thundering herd solution.
-	*/
-	public void someRowDeleted(){
-		hitEnvironment = false;
 	}
 
 	public void enableGravityCheck(){
