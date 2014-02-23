@@ -26,36 +26,46 @@ public class GravityHandler : MonoBehaviour {
 	}
 	
 	void gravity(){
-		for (int i = 0; i < 4; i++) {
-			if(!hitEnvironment){
+		if(!hitEnvironment){
+			for (int i = 0; i < 4; i++) {
 				//all child cubes check if there's anything directly under them
 				GameObject origin = childCubes[i];
-				
-				Ray gravityRay = new Ray (origin.transform.position, -Vector3.up);
-				RaycastHit hitInfo;
-				if (Physics.Raycast (gravityRay, out hitInfo, raycastDistance, environmentMask | tetrominoMask)) {
-					//check that the discovered object is not a sibling cube
-					if(!childCubes.Contains(hitInfo.transform.gameObject)){
-						//stop moving now
-						hitEnvironment = true;
-						isMoving = false;
-						
-						//since we're stopped, let the rowHandler handle row completions
-						rowHandler.checkCompletesRow(childCubes);
-						break;
+				if(origin != null){
+					Ray gravityRay = new Ray (origin.transform.position, -Vector3.up);
+					RaycastHit hitInfo;
+					if (Physics.Raycast (gravityRay, out hitInfo, raycastDistance, environmentMask | tetrominoMask)) {
+						//check that the discovered object is not a sibling cube
+						if(!childCubes.Contains(hitInfo.transform.gameObject)){
+							//stop moving now
+							hitEnvironment = true;
+							isMoving = false;
+							
+							//since we're stopped, let the rowHandler handle row completions
+							rowHandler.checkCompletesRow(childCubes);
+							break;
+						}
+					}
+					
+					if(i == 3){
+						hitEnvironment = false;
 					}
 				}
-				
-				if(i == 3){
-					hitEnvironment = false;
-				}
+			}
+		
+			//if we didn't hit anything, move position down
+			if (!hitEnvironment) {
+				isMoving = true;
+				transform.position += new Vector3 (0, -1, 0);
+				alertNeighbors();
 			}
 		}
-		
-		//if we didn't hit anything, move position down
-		if (!hitEnvironment) {
-			isMoving = true;
-			transform.position += new Vector3 (0, -1, 0);
+	}
+
+	private void alertNeighbors(){
+		Collider[] neighbors = Physics.OverlapSphere (transform.position, 3.0f, tetrominoMask);
+		for (int i = 0; i < neighbors.Length; i++) {
+			GameObject neighbor_tetromino = neighbors[i].gameObject.transform.parent.gameObject;
+			neighbor_tetromino.GetComponent<GravityHandler>().enableGravityCheck();
 		}
 	}
 	
@@ -65,6 +75,10 @@ public class GravityHandler : MonoBehaviour {
 	 * I'll go with this thundering herd solution.
 	*/
 	public void someRowDeleted(){
+		hitEnvironment = false;
+	}
+
+	public void enableGravityCheck(){
 		hitEnvironment = false;
 	}
 }

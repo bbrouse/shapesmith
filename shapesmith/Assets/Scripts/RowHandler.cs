@@ -9,16 +9,38 @@ public class RowHandler : MonoBehaviour {
 	public LayerMask tetrominoMask;
 
 	public void checkCompletesRow(GameObject[] childCubes){
+		List<RaycastHit> hitTetrominos = new List<RaycastHit>();
+		List<GameObject> rowCompletingChildren = new List<GameObject>();
+
 		for (int i = 0; i < childCubes.Length; i++) {
-			//all child cubes check if there's anything directly under them
 			GameObject origin = childCubes[i];
-			handleRow(origin.transform.position, new Vector3(1,0,0));
-			handleRow(origin.transform.position, new Vector3(0,1,0));
-			handleRow(origin.transform.position, new Vector3(0,0,1));
+			if(origin != null){
+				int previousCount = hitTetrominos.Count;
+				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(1,0,0)));
+				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(0,1,0)));
+				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(0,0,1)));
+				if(hitTetrominos.Count > previousCount){
+					rowCompletingChildren.Add(origin);
+				}
+			}
+		}
+
+		if (hitTetrominos.Count != 0) {
+			for (int i = 0; i < rowCompletingChildren.Count; i++) {
+				GameObject tetromino = rowCompletingChildren[i].transform.parent.gameObject;
+				tetromino.GetComponent<GravityHandler>().enableGravityCheck();
+				Destroy(rowCompletingChildren[i]);
+			}
+
+			for (int i = 0; i < hitTetrominos.Count; i++) {
+				GameObject tetromino = hitTetrominos[i].collider.gameObject.transform.parent.gameObject;
+				tetromino.GetComponent<GravityHandler>().enableGravityCheck();
+				Destroy(hitTetrominos[i].collider.gameObject);
+			}
 		}
 	}
 
-	private void handleRow(Vector3 origin, Vector3 direction){
+	private List<RaycastHit> getCompleteRow(Vector3 origin, Vector3 direction){
 		bool[] rowFull = new bool[2];
 		List<RaycastHit> hitTetrominos = new List<RaycastHit>();
 
@@ -29,20 +51,20 @@ public class RowHandler : MonoBehaviour {
 			
 			float distanceToEnvironment = 0;
 			if (Physics.Raycast (exploringRay, out hitInfo, maxRowCheckRange, environmentMask)) {
-				distanceToEnvironment = Vector3.Distance(hitInfo.transform.position, origin);
+				distanceToEnvironment = Vector3.Distance(hitInfo.point, origin);
 				Debug.Log("Distance to environment: " + (int)distanceToEnvironment);
 			}
 			else{
-				break;
+				return new List<RaycastHit>();
 			}
 
-			if(distanceToEnvironment == 1){
+			if(distanceToEnvironment < 1){
 				rowFull[i] = true;
 			}
 			else{
 				RaycastHit[] hits = Physics.RaycastAll(origin, direction, distanceToEnvironment, tetrominoMask);
 				Debug.Log("Number of tetrominos hit: " + hits.Length);
-				if(hits.Length == (int) distanceToEnvironment-1){
+				if(hits.Length == (int) distanceToEnvironment){
 					hitTetrominos.AddRange(hits);
 					rowFull[i] = true;
 				}
@@ -50,11 +72,11 @@ public class RowHandler : MonoBehaviour {
 
 			direction = direction * -1;
 		}
-		Debug.Log (rowFull [0] + ", " + rowFull [1]);
 		if (rowFull [0] && rowFull [1]) {
-			for(int i = 0; i < hitTetrominos.Count; i++){
-				Destroy(hitTetrominos[i].collider.gameObject);
-			}
+			return hitTetrominos;
+		}
+		else{
+			return new List<RaycastHit>();
 		}
 	}
 }
