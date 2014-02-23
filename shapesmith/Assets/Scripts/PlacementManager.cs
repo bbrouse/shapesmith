@@ -5,7 +5,8 @@ public class PlacementManager : MonoBehaviour {
 	
 	public GameObject origin;
 	public float maxDistance;
-	public LayerMask layerMask;
+	public LayerMask environmentMask;
+	public LayerMask tetrominoMask;
 	public GameController gameController;
 	public PauseHandler pauseHandler;
 	public GameObject[] shapesArray = new GameObject[5];
@@ -42,7 +43,7 @@ public class PlacementManager : MonoBehaviour {
 		
 		Debug.DrawRay (origin.transform.position, origin.transform.forward * maxDistance);
 		Physics.Raycast (placementRay, out hitInfo, maxDistance);
-		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, layerMask)) {
+		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, environmentMask | tetrominoMask)) {
 			Vector3 position = hitInfo.point;
 
 			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x);
