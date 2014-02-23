@@ -12,6 +12,7 @@ public class RowHandler : MonoBehaviour {
 	public void checkCompletesRow(GameObject[] childCubes){
 		List<RaycastHit> hitTetrominos = new List<RaycastHit>();
 		List<GameObject> rowCompletingChildren = new List<GameObject>();
+		bool enableGravity = false;
 
 		//each child cube of a tetromino checks to see if it completes a row
 		for (int i = 0; i < childCubes.Length; i++) {
@@ -23,6 +24,7 @@ public class RowHandler : MonoBehaviour {
 				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(0,0,1)));
 				if(hitTetrominos.Count > previousCount){
 					rowCompletingChildren.Add(origin); //if child completes row, we want to destory that too
+					enableGravity = true;
 				}
 			}
 		}
@@ -30,18 +32,19 @@ public class RowHandler : MonoBehaviour {
 		//now we destroy all the cubes that complete a row in x, y, or z direction at one time
 		if (hitTetrominos.Count != 0) {
 			for (int i = 0; i < rowCompletingChildren.Count; i++) {
-				//before we destroy the cube, let the parent know that it should fall if it needs to
-				GameObject tetromino = rowCompletingChildren[i].transform.parent.gameObject;
-				tetromino.GetComponent<GravityHandler>().enableGravityCheck();
-				Destroy(rowCompletingChildren[i]);
+				DestroyImmediate(rowCompletingChildren[i]);
 			}
 
 			for (int i = 0; i < hitTetrominos.Count; i++) {
 				//before we destroy the cube, let the parent know that it should fall if it needs to
 				GameObject tetromino = hitTetrominos[i].collider.gameObject.transform.parent.gameObject;
+				DestroyImmediate(hitTetrominos[i].collider.gameObject);
 				tetromino.GetComponent<GravityHandler>().enableGravityCheck();
-				Destroy(hitTetrominos[i].collider.gameObject);
 			}
+		}
+
+		if (enableGravity) {
+			GetComponent<GravityHandler>().enableGravityCheck();
 		}
 	}
 
