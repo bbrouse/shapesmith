@@ -13,6 +13,7 @@ public class GravityHandler : MonoBehaviour {
 	private GameController gameController;
 	private float raycastDistance = 0.6f; //ray that looks under a cube
 	private bool hitEnvironment = false;
+	private bool gravityCheckEnabled = true;
 	private float fallDelay = 0.5f; //how often the object will drop down
 	
 	void Start(){
@@ -25,7 +26,7 @@ public class GravityHandler : MonoBehaviour {
 	}
 	
 	void gravity(){
-		if(!hitEnvironment){
+		if(gravityCheckEnabled){
 			for (int i = 0; i < 4; i++) {
 				//all child cubes check if there's anything directly under them
 				GameObject origin = childCubes[i];
@@ -33,6 +34,7 @@ public class GravityHandler : MonoBehaviour {
 					Ray gravityRay = new Ray (origin.transform.position, -Vector3.up);
 					RaycastHit hitInfo;
 					if (Physics.Raycast (gravityRay, out hitInfo, raycastDistance, environmentMask | tetrominoMask)) {
+						Debug.Log(hitInfo.transform.gameObject.name);
 						//check that the discovered object is not a sibling cube
 						if(!childCubes.Contains(hitInfo.transform.gameObject)){
 							//stop moving now
@@ -41,13 +43,13 @@ public class GravityHandler : MonoBehaviour {
 							
 							//since we're stopped, let the rowHandler handle row completions
 							rowHandler.checkCompletesRow(childCubes);
+							gravityCheckEnabled = false;
 							break;
 						}
 					}
-					
-					if(i == 3){
-						hitEnvironment = false;
-					}
+				}
+				if(i == 3){
+					hitEnvironment = false;
 				}
 			}
 		
@@ -70,6 +72,6 @@ public class GravityHandler : MonoBehaviour {
 	}
 
 	public void enableGravityCheck(){
-		hitEnvironment = false;
+		gravityCheckEnabled = true;
 	}
 }
