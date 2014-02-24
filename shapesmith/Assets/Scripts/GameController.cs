@@ -14,10 +14,11 @@ public class GameController : MonoBehaviour {
 	public int finalTimeLeft;
 
 	void Start(){
-		debugMode = false;
 		tetrominoTimeLeft = tetrominoTimeLimit;
 		finalTimeLeft = finalTimeLimit;
-		InvokeRepeating("tetrominoTimerCountdown", 1.0f, 1.0f);
+		if(!debugMode){
+			InvokeRepeating("tetrominoTimerCountdown", 1.0f, 1.0f);
+		}
 	}
 
 	void Update(){
@@ -50,6 +51,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			placementManager.placeTetromino();
+			return;
 		}
 		guiText.text = tetrominoTimeLeft.ToString ();
 		tetrominoTimeLeft = tetrominoTimeLimit;
