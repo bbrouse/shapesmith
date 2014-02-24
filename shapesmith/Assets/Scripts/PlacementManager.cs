@@ -22,7 +22,7 @@ public class PlacementManager : MonoBehaviour {
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
 			startPos[i] = shapesArray[i].gameObject.transform.position;
-			startRot[i] = shapesArray[i].gameObject.transform.rotation;
+			//startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
 	}
 
@@ -37,7 +37,8 @@ public class PlacementManager : MonoBehaviour {
 			randomizing = false;
 			CancelInvoke("randomizeTetromino");
 		}
-		
+
+		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
 		
@@ -46,13 +47,9 @@ public class PlacementManager : MonoBehaviour {
 		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, environmentMask | tetrominoMask)) {
 			Vector3 position = hitInfo.point;
 
-			Debug.Log (hitInfo.normal);
-
 			position.x = getCoordinateFromHit(position.x, hitInfo.collider.transform.position.x);
 			position.y = getCoordinateFromHit(position.y, hitInfo.collider.transform.position.y);
 			position.z = getCoordinateFromHit(position.z, hitInfo.collider.transform.position.z);
-
-			checkPlacementAllowed();
 
 			if((hitInfo.collider.GetType() == typeof(MeshCollider) || hitInfo.collider.GetType() == typeof(BoxCollider)) && isCornerHit(position, hitInfo.point)){
 				//We don't want to place the placeholder object because we are looking at a cube's corner
@@ -60,7 +57,6 @@ public class PlacementManager : MonoBehaviour {
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
-				position = position + (hitInfo.normal * .01f);
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				allowPlacement = false;
@@ -88,6 +84,8 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	public bool placeTetromino(){
+		checkPlacementAllowed();
+		Debug.Log (allowPlacement);
 		if (allowPlacement) {
 			Instantiate(tetrominoArray[currentShape], shapesArray[currentShape].transform.parent.gameObject.transform.position, shapesArray[currentShape].transform.parent.gameObject.transform.rotation);
 			return true;
@@ -171,7 +169,7 @@ public class PlacementManager : MonoBehaviour {
 
 	public void checkPlacementAllowed(){
 		for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
-			allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, player.collider);
+			allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
 			if(!allowPlacement) return;
 		}
 	}

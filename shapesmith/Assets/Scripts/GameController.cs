@@ -105,8 +105,7 @@ public class GameController : MonoBehaviour {
 	public bool checkObjectProximity(Vector3 pos, Collider targetCol){
 		var hitColliders = Physics.OverlapSphere(pos, .4f);
 		for(int i=0; i<hitColliders.Length; i++){
-			Debug.Log(hitColliders[i].tag);
-			if(hitColliders[i].tag == "Player")
+			if(hitColliders[i].tag == targetCol.tag)
 				return false;
 		}
 		return true;
