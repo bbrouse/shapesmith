@@ -14,10 +14,11 @@ public class GameController : MonoBehaviour {
 	public int finalTimeLeft;
 
 	void Start(){
-		debugMode = false;
 		tetrominoTimeLeft = tetrominoTimeLimit;
 		finalTimeLeft = finalTimeLimit;
-		InvokeRepeating("tetrominoTimerCountdown", 1.0f, 1.0f);
+		if(!debugMode){
+			InvokeRepeating("tetrominoTimerCountdown", 1.0f, 1.0f);
+		}
 	}
 
 	void Update(){
@@ -50,6 +51,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			placementManager.placeTetromino();
+			return;
 		}
 		guiText.text = tetrominoTimeLeft.ToString ();
 		tetrominoTimeLeft = tetrominoTimeLimit;
@@ -95,6 +97,16 @@ public class GameController : MonoBehaviour {
 		var hitColliders = Physics.OverlapSphere(pos, .4f);
 		if (hitColliders.Length > 0) {
 			return false;
+		}
+		return true;
+	}
+
+	public bool checkObjectProximity(Vector3 pos, Collider targetCol){
+		var hitColliders = Physics.OverlapSphere(pos, .4f);
+		for(int i=0; i<hitColliders.Length; i++){
+			Debug.Log(hitColliders[i].tag);
+			if(hitColliders[i].tag == "Player")
+				return false;
 		}
 		return true;
 	}
