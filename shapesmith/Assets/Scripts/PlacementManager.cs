@@ -54,10 +54,11 @@ public class PlacementManager : MonoBehaviour {
 
 			checkPlacementAllowed();
 
+			Debug.Log (allowPlacement);
+
 			if((hitInfo.collider.GetType() == typeof(MeshCollider) || hitInfo.collider.GetType() == typeof(BoxCollider)) && isCornerHit(position, hitInfo.point)){
 				//We don't want to place the placeholder object because we are looking at a cube's corner
 				//We also want to reset the placeholder object if it gets 'stuck' in the last placed object
-				resetTetromino ();
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
@@ -172,7 +173,7 @@ public class PlacementManager : MonoBehaviour {
 	public void checkPlacementAllowed(){
 		for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
 			allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, player.collider);
-			if(!allowPlacement) break;
+			if(!allowPlacement) return;
 		}
 	}
 }
