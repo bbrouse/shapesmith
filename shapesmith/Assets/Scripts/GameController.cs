@@ -51,7 +51,8 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			placementManager.placeTetromino();
-			return;
+			if(debugMode)
+				return;
 		}
 		guiText.text = tetrominoTimeLeft.ToString ();
 		tetrominoTimeLeft = tetrominoTimeLimit;
