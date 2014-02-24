@@ -64,7 +64,7 @@ public class GravityHandler : MonoBehaviour {
 
 	//let neighboring tetros know that we're moving so they can start checking again
 	private void alertNeighbors(){
-		Collider[] neighbors = Physics.OverlapSphere (transform.position, 3.0f, tetrominoMask);
+		Collider[] neighbors = Physics.OverlapSphere (transform.position, 5.0f, tetrominoMask);
 		for (int i = 0; i < neighbors.Length; i++) {
 			GameObject neighbor_tetromino = neighbors[i].gameObject.transform.parent.gameObject;
 			neighbor_tetromino.GetComponent<GravityHandler>().enableGravityCheck();

@@ -30,7 +30,7 @@ public class PlacementManager : MonoBehaviour {
 
 		if (!gameController.debugMode && !randomizing) {
 			randomizing = true;
-			InvokeRepeating ("randomizeTetromino", 7.5f, 7.5f);
+			//InvokeRepeating ("randomizeTetromino", 7.5f, 7.5f);
 		}
 
 		if (gameController.debugMode) {
@@ -98,10 +98,14 @@ public class PlacementManager : MonoBehaviour {
 			allowPlacement = false;
 			resetTetromino ();
 		}
+	}
 
-		if (Input.GetMouseButtonDown (0) && allowPlacement == true) {
+	public bool placeTetromino(){
+		if (allowPlacement) {
 			Instantiate(tetrominoArray[currentShape], shapesArray[currentShape].transform.parent.gameObject.transform.position, shapesArray[currentShape].transform.parent.gameObject.transform.rotation);
+			return true;
 		}
+		return false;
 	}
 	
 	private float getCoordinateFromHit(float positionCoordinate, float hitCoordinate){
@@ -160,7 +164,7 @@ public class PlacementManager : MonoBehaviour {
 		}
 	}
 
-	private void randomizeTetromino(){
+	public void randomizeTetromino(){
 		if(!pauseHandler.paused){
 			int rand = Random.Range (0, 5);
 			while (rand == currentShape) {

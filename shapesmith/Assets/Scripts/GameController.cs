@@ -5,12 +5,28 @@ public class GameController : MonoBehaviour {
 	public bool debugMode;
 	public float tetrominoFallDelay;
 	public PlacementManager placementManager;
+	public int tetrominosLeft;
+	public int tetrominoTimeLimit;
+	public int finalTimeLimit;
+	public GUIText guiText;
+
+	public int tetrominoTimeLeft;
+	public int finalTimeLeft;
 
 	void Start(){
 		debugMode = false;
+		tetrominoTimeLeft = tetrominoTimeLimit;
+		finalTimeLeft = finalTimeLimit;
+		InvokeRepeating("tetrominoTimerCountdown", 1.0f, 1.0f);
 	}
 
 	void Update(){
+		if (Input.GetMouseButtonDown (0)){
+			if(tetrominosLeft > 0){
+				placeTetromino(false);
+			}
+		}
+
 		if (Input.GetKeyDown ("tab") && debugMode) {
 			placementManager.switchTetromino();
 		}
@@ -26,6 +42,53 @@ public class GameController : MonoBehaviour {
 		if (Input.GetKeyDown ("3")) {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
 		}
+	}
+
+	private void placeTetromino(bool forced){
+		if (forced) {
+			placementManager.placeTetromino();
+		}
+		else{
+			placementManager.placeTetromino();
+		}
+		guiText.text = tetrominoTimeLeft.ToString ();
+		tetrominoTimeLeft = tetrominoTimeLimit;
+		tetrominosLeft--;
+		if (tetrominosLeft == 0) {
+			CancelInvoke("tetrominoTimerCountdown");
+			InvokeRepeating("finalCountdown", 1.0f, 1.0f);
+		}
+		placementManager.randomizeTetromino ();
+	}
+
+	private void tetrominoTimerCountdown(){
+		if (tetrominoTimeLeft == 0) {
+			placeTetromino(true);
+			tetrominoTimeLeft = tetrominoTimeLimit;
+		}
+		else{
+			tetrominoTimeLeft--;
+		}
+		guiText.text = tetrominoTimeLeft.ToString (); 
+	}
+
+	private void finalCountdown(){
+		if (finalTimeLeft == 0) {
+			CancelInvoke("finalCountdown");
+			guiText.text = "Level Failed";
+			Debug.Log ("Level Failed");
+			return;
+		}
+		else{
+			finalTimeLeft--;
+		}
+		guiText.text = finalTimeLeft.ToString ();
+	}
+
+	public void levelCompleted(){
+		CancelInvoke("finalCountdown");
+		CancelInvoke("tetrominoTimerCountdown");
+		guiText.text = "Level Completed";
 	}
 
 	public bool checkObjectProximity(Vector3 pos){
