@@ -33,13 +33,18 @@ public class RowHandler : MonoBehaviour {
 		if (hitTetrominos.Count != 0) {
 			for (int i = 0; i < rowCompletingChildren.Count; i++) {
 				DestroyImmediate(rowCompletingChildren[i]);
+				GetComponent<SplitHandler>().checkandHandleSplit(childCubes);
 			}
 
 			for (int i = 0; i < hitTetrominos.Count; i++) {
-				//before we destroy the cube, let the parent know that it should fall if it needs to
-				GameObject tetromino = hitTetrominos[i].collider.gameObject.transform.parent.gameObject;
-				DestroyImmediate(hitTetrominos[i].collider.gameObject);
-				tetromino.GetComponent<GravityHandler>().enableGravityCheck();
+				if(hitTetrominos[i].collider != null){
+					//before we destroy the cube, let the parent know that it should fall if it needs to
+					GameObject tetromino = hitTetrominos[i].collider.gameObject.transform.parent.gameObject;
+					DestroyImmediate(hitTetrominos[i].collider.gameObject);
+					GravityHandler hitTetroGravityHandler = tetromino.GetComponent<GravityHandler>();
+					tetromino.GetComponent<SplitHandler>().checkandHandleSplit(hitTetroGravityHandler.childCubes);
+					hitTetroGravityHandler.enableGravityCheck();
+				}
 			}
 		}
 
