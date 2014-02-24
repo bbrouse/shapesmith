@@ -34,7 +34,6 @@ public class GravityHandler : MonoBehaviour {
 					Ray gravityRay = new Ray (origin.transform.position, -Vector3.up);
 					RaycastHit hitInfo;
 					if (Physics.Raycast (gravityRay, out hitInfo, raycastDistance, environmentMask | tetrominoMask)) {
-						Debug.Log(hitInfo.transform.gameObject.name);
 						//check that the discovered object is not a sibling cube
 						if(!childCubes.Contains(hitInfo.transform.gameObject)){
 							//stop moving now
