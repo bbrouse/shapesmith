@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
 	public bool debugMode;
@@ -135,14 +136,14 @@ public class GameController : MonoBehaviour {
 		return false;
 	}
 
-	public bool checkObjNonTargetProx(Vector3 pos, Collider targetCol, ref Collider actualHit){
-		var hitColliders = Physics.OverlapSphere(pos, .4f);
+	public bool checkObjNonTargetProx(GameObject colliding, Collider targetCol, ref List<GameObject> actualHit){
+		var hitColliders = Physics.OverlapSphere(colliding.transform.position, .4f);
 		for(int i=0; i<hitColliders.Length; i++){
 			if(hitColliders[i] != targetCol){
-				actualHit = hitColliders[i];
-				return true;
+				actualHit.Add(colliding);
 			}
 		}
+		if(actualHit.Count > 0) return true;
 		return false;
 	}
 
