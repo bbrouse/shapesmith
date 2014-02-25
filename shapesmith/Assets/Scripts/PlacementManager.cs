@@ -16,14 +16,16 @@ public class PlacementManager : MonoBehaviour {
 
 	private bool allowPlacement = false;
 	private Vector3[] startPos = new Vector3[5];
-	private Quaternion[] startRot = new Quaternion[5];
+	//private Quaternion[] startRot = new Quaternion[5];
 	private bool randomizing = false;
+	private Material wireFrameMat;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
 			startPos[i] = shapesArray[i].gameObject.transform.position;
 			//startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
+		wireFrameMat = (Material)Resources.Load ("outlineMaterial", typeof(Material));
 	}
 
 	void Update () {
@@ -59,7 +61,7 @@ public class PlacementManager : MonoBehaviour {
 			}else{
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
-				allowPlacement = false;
+				checkPlacementAllowed();
 
 				while(!allowPlacement){
 					for(int i=0; i<4; i++){
@@ -77,6 +79,8 @@ public class PlacementManager : MonoBehaviour {
 					}
 				}
 			}
+
+			checkPlacementAllowed();
 		}else{
 			allowPlacement = false;
 			resetTetromino ();
@@ -170,7 +174,12 @@ public class PlacementManager : MonoBehaviour {
 	public void checkPlacementAllowed(){
 		for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
 			allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
-			if(!allowPlacement) return;
+			if(!allowPlacement){
+				wireFrameMat.color = Color.red;
+				return;
+			}
 		}
+
+		wireFrameMat.color = Color.black;
 	}
 }
