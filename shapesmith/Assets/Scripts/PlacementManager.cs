@@ -13,17 +13,21 @@ public class PlacementManager : MonoBehaviour {
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 	public int currentShape = 0;
+	public Collider actualCollider;
 
 	private bool allowPlacement = false;
 	private Vector3[] startPos = new Vector3[5];
 	private Quaternion[] startRot = new Quaternion[5];
 	private bool randomizing = false;
+	private Material wireFrameMat;
+	private Vector3 translateDirection;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
 			startPos[i] = shapesArray[i].gameObject.transform.position;
-			//startRot[i] = shapesArray[i].gameObject.transform.rotation;
+			startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
+		wireFrameMat = (Material)Resources.Load ("outlineMaterial", typeof(Material));
 	}
 
 	void Update () {
@@ -59,24 +63,68 @@ public class PlacementManager : MonoBehaviour {
 			}else{
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
-				allowPlacement = false;
+				checkPlacementAllowed();
 
-				while(!allowPlacement){
-					for(int i=0; i<4; i++){
-						while(!gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position)){
-							shapesArray[currentShape].transform.parent.gameObject.transform.Translate(hitInfo.normal, Space.World);
-						}
-					}
-					
-					for(int i=0; i<4; i++){
-						if(gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position)){
-							if(i == 3) allowPlacement = true;
-						}else{
-							break;
-						}
+				bool checkNext = false;
+
+				for(int i=0; i<4; i++){
+					if(gameController.checkObjTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, hitInfo.collider)){
+						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(hitInfo.normal, Space.World);
+						i = -1;
 					}
 				}
+
+				for(int i=0; i<4; i++){
+					if(gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, hitInfo.collider, ref actualCollider)){
+						translateDirection = actualCollider.transform.position - shapesArray[currentShape].gameObject.transform.position;
+						checkNext = true;
+						break;
+					}
+				}
+
+				translateDirection.x = (float) System.Math.Round((translateDirection.x * 2), System.MidpointRounding.AwayFromZero) / 2;
+				translateDirection.y = (float) System.Math.Round((translateDirection.y * 2), System.MidpointRounding.AwayFromZero) / 2;
+				translateDirection.z = (float) System.Math.Round((translateDirection.z * 2), System.MidpointRounding.AwayFromZero) / 2;
+
+				if(translateDirection.x % 1 == 0){
+					if(shapesArray[currentShape].gameObject.transform.position.x < actualCollider.transform.position.x){
+						translateDirection = new Vector3(-1.0f, 0.0f, 0.0f);
+					}else{
+						translateDirection = new Vector3(1.0f, 0.0f, 0.0f);
+					}
+				}else if(translateDirection.y % 1 == 0){
+					if(shapesArray[currentShape].gameObject.transform.position.y < actualCollider.transform.position.y){
+						translateDirection = new Vector3(0.0f, -1.0f, 0.0f);
+					}else{
+						translateDirection = new Vector3(0.0f, 1.0f, 0.0f);
+					}
+				}else if(translateDirection.z % 1 == 0){
+					if(shapesArray[currentShape].gameObject.transform.position.z < actualCollider.transform.position.z){
+						translateDirection = new Vector3(0.0f, 0.0f, -1.0f);
+					}else{
+						translateDirection = new Vector3(0.0f, 0.0f, 1.0f);
+					}
+				}
+
+				if(checkNext){
+					for(int j=0; j<3; j++){
+						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection * (j+1), Space.World);
+						for(int i=0; i<4; i++){
+							if(gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, hitInfo.collider)){
+								shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection * -(j+1), Space.World);
+								break;
+							}
+
+							if(i==3) checkNext = false;
+						}
+						if(!checkNext) break;
+					}
+				}
+
+				checkPlacementAllowed();
 			}
+
+			checkPlacementAllowed();
 		}else{
 			allowPlacement = false;
 			resetTetromino ();
@@ -85,7 +133,6 @@ public class PlacementManager : MonoBehaviour {
 
 	public bool placeTetromino(){
 		checkPlacementAllowed();
-		Debug.Log (allowPlacement);
 		if (allowPlacement) {
 			Instantiate(tetrominoArray[currentShape], shapesArray[currentShape].transform.parent.gameObject.transform.position, shapesArray[currentShape].transform.parent.gameObject.transform.rotation);
 			return true;
@@ -156,21 +203,31 @@ public class PlacementManager : MonoBehaviour {
 				rand = Random.Range (0, 5);
 			}
 
-			resetTetromino ();
+			resetTetrominoFull ();
 			currentShape = rand;
 		}
 	}
 
 	private void resetTetromino(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
-		//It was decided that resetting rotation probably isn't a good idea.
-		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
+		//It was decided that resetting rotation probably isn't a good idea, unless a block is being placed.
+		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
+	}
+
+	private void resetTetrominoFull(){
+		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
+		shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
 	}
 
 	public void checkPlacementAllowed(){
 		for(int i=0; i<shapesArray[currentShape].gameObject.transform.parent.childCount; i++){
-			allowPlacement = gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
-			if(!allowPlacement) return;
+			allowPlacement = !gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position);
+			if(!allowPlacement){
+				wireFrameMat.color = Color.red;
+				return;
+			}
 		}
+
+		wireFrameMat.color = Color.black;
 	}
 }
