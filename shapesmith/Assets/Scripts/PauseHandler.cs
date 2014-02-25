@@ -39,7 +39,8 @@ public class PauseHandler : MonoBehaviour {
 			}
 
 			if(GUILayout.Button("Restart Level")){
-				Application.LoadLevel("Level_1");
+				Debug.Log(UnityEditor.EditorApplication.currentScene);
+				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
 	}
