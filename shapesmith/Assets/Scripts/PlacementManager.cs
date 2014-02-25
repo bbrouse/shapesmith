@@ -13,8 +13,8 @@ public class PlacementManager : MonoBehaviour {
 	public GameObject[] shapesArray = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 	public int currentShape = 0;
-	public Collider actualCollider;
 
+	private Collider actualCollider = new Collider();
 	private bool allowPlacement = false;
 	private Vector3[] startPos = new Vector3[5];
 	private Quaternion[] startRot = new Quaternion[5];
