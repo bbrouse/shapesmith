@@ -97,17 +97,37 @@ public class GameController : MonoBehaviour {
 	public bool checkObjectProximity(Vector3 pos){
 		var hitColliders = Physics.OverlapSphere(pos, .4f);
 		if (hitColliders.Length > 0) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
-	public bool checkObjectProximity(Vector3 pos, Collider targetCol){
+	public bool checkObjTargetProx(Vector3 pos, Collider targetCol){
 		var hitColliders = Physics.OverlapSphere(pos, .4f);
 		for(int i=0; i<hitColliders.Length; i++){
-			if(hitColliders[i].tag == targetCol.tag)
-				return false;
+			if(hitColliders[i] == targetCol)
+				return true;
 		}
-		return true;
+		return false;
+	}
+
+	public bool checkObjNonTargetProx(Vector3 pos, Collider targetCol){
+		var hitColliders = Physics.OverlapSphere(pos, .4f);
+		for(int i=0; i<hitColliders.Length; i++){
+			if(hitColliders[i] != targetCol)
+				return true;
+		}
+		return false;
+	}
+
+	public bool checkObjNonTargetProx(Vector3 pos, Collider targetCol, ref Collider actualHit){
+		var hitColliders = Physics.OverlapSphere(pos, .4f);
+		for(int i=0; i<hitColliders.Length; i++){
+			if(hitColliders[i] != targetCol){
+				actualHit = hitColliders[i];
+				return true;
+			}
+		}
+		return false;
 	}
 }

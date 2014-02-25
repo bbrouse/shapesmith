@@ -3,12 +3,13 @@ using System.Collections;
 
 public class HideAndLockCursor : MonoBehaviour {
 	public GameObject player;
-	public GameObject gameController;
+	public GameObject gameControllerObj;
 
 	private CharacterMotor playerMotor;
 	private MouseLook playerMouse;
 	private MouseLook cameraMouse;
 	private PlacementManager placementManager;
+	private GameController gameController;
 
 	//Starts with the cursor locked and grabs the components for player movement and player/camera mouse movement.
 	void Start() {
@@ -16,7 +17,8 @@ public class HideAndLockCursor : MonoBehaviour {
 		playerMotor = player.GetComponent<CharacterMotor> ();
 		playerMouse = player.GetComponent<MouseLook> ();
 		cameraMouse = Camera.main.GetComponent<MouseLook> ();
-		placementManager = gameController.GetComponent<PlacementManager> ();
+		placementManager = gameControllerObj.GetComponent<PlacementManager> ();
+		gameController = gameControllerObj.GetComponent<GameController>();
 	}
 
 	//Sets all movement and mouse locks to false if true and true if false on pressing the p key.
@@ -26,5 +28,6 @@ public class HideAndLockCursor : MonoBehaviour {
 		playerMouse.enabled = !playerMouse.enabled;
 		cameraMouse.enabled = !cameraMouse.enabled;
 		placementManager.enabled = !placementManager.enabled;
+		gameController.enabled = !gameController.enabled;
 	}
 }
