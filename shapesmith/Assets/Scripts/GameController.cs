@@ -8,16 +8,20 @@ public class GameController : MonoBehaviour {
 	public int tetrominosLeft;
 	public int tetrominoTimeLimit;
 	public int finalTimeLimit;
-	public GUIText guiText;
+	public GUIText alertText;
+	public GUIText tetrominosLeftText;
+	public GUIText timerText;
 
-	public int tetrominoTimeLeft;
-	public int finalTimeLeft;
+	private int tetrominoTimeLeft;
+	private int finalTimeLeft;
+	private bool isLevelCompleted = false;
 
 	void Start(){
 		tetrominoTimeLeft = tetrominoTimeLimit;
 		finalTimeLeft = finalTimeLimit;
+		tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
 		if(!debugMode){
-			InvokeRepeating("tetrominoTimerCountdown", 1.0f, 1.0f);
+			InvokeRepeating("tetrominoTimerCountdown", 2.0f, 1.0f);
 		}
 	}
 
@@ -54,12 +58,13 @@ public class GameController : MonoBehaviour {
 			if(debugMode)
 				return;
 		}
-		guiText.text = tetrominoTimeLeft.ToString ();
+		timerText.text = (tetrominoTimeLeft).ToString ();
 		tetrominoTimeLeft = tetrominoTimeLimit;
 		tetrominosLeft--;
+		tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
 		if (tetrominosLeft == 0) {
 			CancelInvoke("tetrominoTimerCountdown");
-			InvokeRepeating("finalCountdown", 1.0f, 1.0f);
+			InvokeRepeating("finalCountdown", 0.0f, 1.0f);
 		}
 		placementManager.randomizeTetromino ();
 	}
@@ -72,26 +77,36 @@ public class GameController : MonoBehaviour {
 		else{
 			tetrominoTimeLeft--;
 		}
-		guiText.text = tetrominoTimeLeft.ToString (); 
+		timerText.text = tetrominoTimeLeft.ToString (); 
 	}
 
 	private void finalCountdown(){
 		if (finalTimeLeft == 0) {
-			CancelInvoke("finalCountdown");
-			guiText.text = "Level Failed";
-			Debug.Log ("Level Failed");
+			timerText.text = (finalTimeLeft).ToString ();
+			levelFailed();
 			return;
 		}
 		else{
 			finalTimeLeft--;
 		}
-		guiText.text = finalTimeLeft.ToString ();
+		timerText.color = Color.red;
+		timerText.text = (finalTimeLeft).ToString ();
 	}
 
 	public void levelCompleted(){
 		CancelInvoke("finalCountdown");
 		CancelInvoke("tetrominoTimerCountdown");
-		guiText.text = "Level Completed";
+		alertText.color = Color.green;
+		alertText.text = "Level Completed";
+		Invoke ("loadMainMenu", 2.0f);
+	}
+
+	public void levelFailed(){
+		CancelInvoke("finalCountdown");
+		CancelInvoke("tetrominoTimerCountdown");
+		alertText.color = Color.red;
+		alertText.text = "Level Failed";
+		Invoke ("loadMainMenu", 2.0f);
 	}
 
 	public bool checkObjectProximity(Vector3 pos){
@@ -129,5 +144,9 @@ public class GameController : MonoBehaviour {
 			}
 		}
 		return false;
+	}
+
+	private void loadMainMenu(){
+		Application.LoadLevel("Main_Menu");
 	}
 }

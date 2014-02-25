@@ -39,7 +39,7 @@ public class PauseHandler : MonoBehaviour {
 			}
 
 			if(GUILayout.Button("Restart Level")){
-				Application.LoadLevel("Level_1");
+				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
 	}
