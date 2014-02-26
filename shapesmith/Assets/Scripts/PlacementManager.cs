@@ -12,6 +12,7 @@ public class PlacementManager : MonoBehaviour {
 	public GameController gameController;
 	public PauseHandler pauseHandler;
 	public GameObject[] shapesArray = new GameObject[5];
+	public GameObject[] wireShapes = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 	public int currentShape = 0;
 
@@ -141,7 +142,7 @@ public class PlacementManager : MonoBehaviour {
 			checkPlacementAllowed();
 		}else{
 			allowPlacement = false;
-			resetTetromino ();
+			resetTetrominoFull ();
 		}
 	}
 
@@ -202,7 +203,7 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	public void switchTetromino(){
-		resetTetromino ();
+		resetTetrominoPos ();
 		if (currentShape < 4) {
 			currentShape++;
 		} else {
@@ -222,7 +223,7 @@ public class PlacementManager : MonoBehaviour {
 		}
 	}
 
-	private void resetTetromino(){
+	private void resetTetrominoPos(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		//It was decided that resetting rotation probably isn't a good idea, unless a block is being placed.
 		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
@@ -248,21 +249,15 @@ public class PlacementManager : MonoBehaviour {
 	private void checkPlayerRotation(){
 		Vector3 pAngles = player.transform.eulerAngles;
 
-		Debug.Log (playerStartRot + ", " + pAngles);
-
-		if (pAngles.x > playerStartRot.x + 45) {
-			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (shapesArray[currentShape].transform.parent.gameObject.transform.right * 90);
-			playerStartRot.x += 90;
-		} else if (pAngles.x < playerStartRot.x - 45) {
-			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (-shapesArray[currentShape].transform.parent.gameObject.transform.right * 90);
-			playerStartRot.x -= 90;
-		}
-
 		if (pAngles.y > playerStartRot.y + 45) {
-			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (shapesArray[currentShape].transform.parent.gameObject.transform.up * 90);
+			for(int i=0; i<5; i++){
+				wireShapes[i].transform.Rotate (wireShapes[i].transform.up * 90);
+			}
 			playerStartRot.y += 90;
 		} else if(pAngles.y < playerStartRot.y - 45) {
-			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (-shapesArray[currentShape].transform.parent.gameObject.transform.up * 90);
+			for(int i=0; i<5; i++){
+				wireShapes[i].transform.Rotate (-wireShapes[i].transform.up * 90);
+			}
 			playerStartRot.y -= 90;
 		}
 	}
