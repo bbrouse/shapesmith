@@ -23,6 +23,7 @@ public class PlacementManager : MonoBehaviour {
 	private bool randomizing = false;
 	private Material wireFrameMat;
 	private Vector3 translateDirection;
+	private Vector3 playerStartRot;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
@@ -30,6 +31,7 @@ public class PlacementManager : MonoBehaviour {
 			startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
 		wireFrameMat = (Material)Resources.Load ("outlineMaterial", typeof(Material));
+		playerStartRot = player.transform.eulerAngles;
 	}
 
 	void Update () {
@@ -63,6 +65,8 @@ public class PlacementManager : MonoBehaviour {
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
+				checkPlayerRotation();
+
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				checkPlacementAllowed();
@@ -239,5 +243,27 @@ public class PlacementManager : MonoBehaviour {
 		}
 
 		wireFrameMat.color = Color.black;
+	}
+
+	private void checkPlayerRotation(){
+		Vector3 pAngles = player.transform.eulerAngles;
+
+		Debug.Log (playerStartRot + ", " + pAngles);
+
+		if (pAngles.x > playerStartRot.x + 45) {
+			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (shapesArray[currentShape].transform.parent.gameObject.transform.right * 90);
+			playerStartRot.x += 90;
+		} else if (pAngles.x < playerStartRot.x - 45) {
+			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (-shapesArray[currentShape].transform.parent.gameObject.transform.right * 90);
+			playerStartRot.x -= 90;
+		}
+
+		if (pAngles.y > playerStartRot.y + 45) {
+			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (shapesArray[currentShape].transform.parent.gameObject.transform.up * 90);
+			playerStartRot.y += 90;
+		} else if(pAngles.y < playerStartRot.y - 45) {
+			shapesArray [currentShape].transform.parent.gameObject.transform.Rotate (-shapesArray[currentShape].transform.parent.gameObject.transform.up * 90);
+			playerStartRot.y -= 90;
+		}
 	}
 }
