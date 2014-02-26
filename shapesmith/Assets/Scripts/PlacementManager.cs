@@ -78,6 +78,8 @@ public class PlacementManager : MonoBehaviour {
 					gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).gameObject, hitInfo.collider, ref childsColliding);
 				}
 
+				int translateCount = 0;
+
 				for(int i=0; i<childsColliding.Count; i = i + 1){
 					translatedChildsColliding.Clear();
 
@@ -103,6 +105,7 @@ public class PlacementManager : MonoBehaviour {
 					}
 
 					shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection, Space.World);
+					translateCount++;
 
 					for(int k=0; k<4; k++){
 						gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(k).gameObject, hitInfo.collider, ref translatedChildsColliding);
@@ -114,6 +117,15 @@ public class PlacementManager : MonoBehaviour {
 						for(int j=0; j<translatedChildsColliding.Count; j++){
 							childsColliding.Add (translatedChildsColliding[j]);
 						}
+					}
+
+					if(translateCount > 3)	break;
+				}
+
+				for(int i=0; i<4; i++){
+					if(gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position)){
+						shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
+						break;
 					}
 				}
 
