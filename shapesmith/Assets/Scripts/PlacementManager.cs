@@ -142,7 +142,7 @@ public class PlacementManager : MonoBehaviour {
 			checkPlacementAllowed();
 		}else{
 			allowPlacement = false;
-			resetTetrominoFull ();
+			resetTetrominoPos ();
 		}
 	}
 
@@ -249,14 +249,16 @@ public class PlacementManager : MonoBehaviour {
 	private void checkPlayerRotation(){
 		Vector3 pAngles = player.transform.eulerAngles;
 
+		Debug.Log(pAngles + ", " + playerStartRot);
+
 		if (pAngles.y > playerStartRot.y + 45) {
 			for(int i=0; i<5; i++){
-				wireShapes[i].transform.Rotate (wireShapes[i].transform.up * 90);
+				wireShapes[i].transform.Rotate (new Vector3(0, 90, 0), Space.World);
 			}
 			playerStartRot.y += 90;
 		} else if(pAngles.y < playerStartRot.y - 45) {
 			for(int i=0; i<5; i++){
-				wireShapes[i].transform.Rotate (-wireShapes[i].transform.up * 90);
+				wireShapes[i].transform.Rotate (new Vector3(0, -90, 0), Space.World);
 			}
 			playerStartRot.y -= 90;
 		}
