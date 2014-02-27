@@ -37,15 +37,11 @@ public class GameController : MonoBehaviour {
 			placementManager.switchTetromino();
 		}
 		
-		if (Input.GetKeyDown ("1")) {
+		if (Input.GetKeyDown ("q")) {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
 		}
-		
-		if (Input.GetKeyDown ("2")) {
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(90, 0, 0);
-		}
-		
-		if (Input.GetKeyDown ("3")) {
+
+		if (Input.GetKeyDown ("e")) {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
 		}
 	}
