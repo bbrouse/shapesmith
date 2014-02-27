@@ -21,7 +21,6 @@ public class RowHandler : MonoBehaviour {
 			if(origin != null){
 				int previousCount = hitTetrominos.Count;
 				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(1,0,0)));
-				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(0,1,0)));
 				hitTetrominos.AddRange(getCompleteRow(origin.transform.position, new Vector3(0,0,1)));
 				if(hitTetrominos.Count > previousCount){
 					rowCompletingChildren.Add(origin); //if child completes row, we want to destory that too
