@@ -12,7 +12,7 @@ public class PlacementManager : MonoBehaviour {
 	public GameController gameController;
 	public PauseHandler pauseHandler;
 	public GameObject[] shapesArray = new GameObject[5];
-	public GameObject[] wireShapes = new GameObject[5];
+	//public GameObject[] wireShapes = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 	public int currentShape = 0;
 
@@ -24,7 +24,7 @@ public class PlacementManager : MonoBehaviour {
 	private bool randomizing = false;
 	private Material wireFrameMat;
 	private Vector3 translateDirection;
-	private Vector3 playerStartRot;
+	//private Vector3 playerStartRot;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
@@ -32,7 +32,7 @@ public class PlacementManager : MonoBehaviour {
 			startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
 		wireFrameMat = (Material)Resources.Load ("outlineMaterial", typeof(Material));
-		playerStartRot = player.transform.eulerAngles;
+		//playerStartRot = player.transform.eulerAngles;
 	}
 
 	void Update () {
@@ -66,7 +66,7 @@ public class PlacementManager : MonoBehaviour {
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
-				checkPlayerRotation();
+				//checkPlayerRotation();
 
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
@@ -246,7 +246,7 @@ public class PlacementManager : MonoBehaviour {
 		wireFrameMat.color = Color.black;
 	}
 
-	private void checkPlayerRotation(){
+	/*private void checkPlayerRotation(){
 		Vector3 pAngles = player.transform.eulerAngles;
 
 		Debug.Log(pAngles + ", " + playerStartRot);
@@ -262,5 +262,5 @@ public class PlacementManager : MonoBehaviour {
 			}
 			playerStartRot.y -= 90;
 		}
-	}
+	}*/
 }
