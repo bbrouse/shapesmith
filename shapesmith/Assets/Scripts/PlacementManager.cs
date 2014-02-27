@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlacementManager : MonoBehaviour {
 	
@@ -11,16 +12,19 @@ public class PlacementManager : MonoBehaviour {
 	public GameController gameController;
 	public PauseHandler pauseHandler;
 	public GameObject[] shapesArray = new GameObject[5];
+	//public GameObject[] wireShapes = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[5];
 	public int currentShape = 0;
-	public Collider actualCollider;
 
+	private List<GameObject> childsColliding = new List<GameObject>();
+	private List<GameObject> translatedChildsColliding = new List<GameObject> ();
 	private bool allowPlacement = false;
 	private Vector3[] startPos = new Vector3[5];
 	private Quaternion[] startRot = new Quaternion[5];
 	private bool randomizing = false;
 	private Material wireFrameMat;
 	private Vector3 translateDirection;
+	//private Vector3 playerStartRot;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
@@ -28,6 +32,7 @@ public class PlacementManager : MonoBehaviour {
 			startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
 		wireFrameMat = (Material)Resources.Load ("outlineMaterial", typeof(Material));
+		//playerStartRot = player.transform.eulerAngles;
 	}
 
 	void Update () {
@@ -61,11 +66,11 @@ public class PlacementManager : MonoBehaviour {
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
+				//checkPlayerRotation();
+
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				checkPlacementAllowed();
-
-				bool checkNext = false;
 
 				for(int i=0; i<4; i++){
 					if(gameController.checkObjTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, hitInfo.collider)){
@@ -75,51 +80,61 @@ public class PlacementManager : MonoBehaviour {
 				}
 
 				for(int i=0; i<4; i++){
-					if(gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, hitInfo.collider, ref actualCollider)){
-						translateDirection = actualCollider.transform.position - shapesArray[currentShape].gameObject.transform.position;
-						checkNext = true;
-						break;
-					}
+					gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).gameObject, hitInfo.collider, ref childsColliding);
 				}
 
-				translateDirection.x = (float) System.Math.Round((translateDirection.x * 2), System.MidpointRounding.AwayFromZero) / 2;
-				translateDirection.y = (float) System.Math.Round((translateDirection.y * 2), System.MidpointRounding.AwayFromZero) / 2;
-				translateDirection.z = (float) System.Math.Round((translateDirection.z * 2), System.MidpointRounding.AwayFromZero) / 2;
+				int translateCount = 0;
 
-				if(translateDirection.x % 1 == 0){
-					if(shapesArray[currentShape].gameObject.transform.position.x < actualCollider.transform.position.x){
+				for(int i=0; i<childsColliding.Count; i = i + 1){
+					translatedChildsColliding.Clear();
+
+					if(shapesArray[currentShape].gameObject.transform.position.x == childsColliding[i].transform.position.x){}
+					else if(shapesArray[currentShape].gameObject.transform.position.x < childsColliding[i].transform.position.x){
 						translateDirection = new Vector3(-1.0f, 0.0f, 0.0f);
 					}else{
 						translateDirection = new Vector3(1.0f, 0.0f, 0.0f);
 					}
-				}else if(translateDirection.y % 1 == 0){
-					if(shapesArray[currentShape].gameObject.transform.position.y < actualCollider.transform.position.y){
+					
+					if(shapesArray[currentShape].gameObject.transform.position.y == childsColliding[i].transform.position.y){}
+					else if(shapesArray[currentShape].gameObject.transform.position.y < childsColliding[i].transform.position.y){
 						translateDirection = new Vector3(0.0f, -1.0f, 0.0f);
 					}else{
 						translateDirection = new Vector3(0.0f, 1.0f, 0.0f);
 					}
-				}else if(translateDirection.z % 1 == 0){
-					if(shapesArray[currentShape].gameObject.transform.position.z < actualCollider.transform.position.z){
+					
+					if(shapesArray[currentShape].gameObject.transform.position.z == childsColliding[i].transform.position.z){}
+					else if(shapesArray[currentShape].gameObject.transform.position.z < childsColliding[i].transform.position.z){
 						translateDirection = new Vector3(0.0f, 0.0f, -1.0f);
 					}else{
 						translateDirection = new Vector3(0.0f, 0.0f, 1.0f);
 					}
+
+					shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection, Space.World);
+					translateCount++;
+
+					for(int k=0; k<4; k++){
+						gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(k).gameObject, hitInfo.collider, ref translatedChildsColliding);
+					}
+
+					if(translatedChildsColliding.Count > 0){
+						i=-1;
+						childsColliding.Clear();
+						for(int j=0; j<translatedChildsColliding.Count; j++){
+							childsColliding.Add (translatedChildsColliding[j]);
+						}
+					}
+
+					if(translateCount > 3)	break;
 				}
 
-				if(checkNext){
-					for(int j=0; j<3; j++){
-						shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection * (j+1), Space.World);
-						for(int i=0; i<4; i++){
-							if(gameController.checkObjNonTargetProx(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position, hitInfo.collider)){
-								shapesArray[currentShape].transform.parent.gameObject.transform.Translate(translateDirection * -(j+1), Space.World);
-								break;
-							}
-
-							if(i==3) checkNext = false;
-						}
-						if(!checkNext) break;
+				for(int i=0; i<4; i++){
+					if(gameController.checkObjectProximity(shapesArray[currentShape].gameObject.transform.parent.GetChild(i).position)){
+						shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
+						break;
 					}
 				}
+
+				childsColliding.Clear();
 
 				checkPlacementAllowed();
 			}
@@ -127,7 +142,7 @@ public class PlacementManager : MonoBehaviour {
 			checkPlacementAllowed();
 		}else{
 			allowPlacement = false;
-			resetTetromino ();
+			resetTetrominoPos ();
 		}
 	}
 
@@ -188,7 +203,7 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	public void switchTetromino(){
-		resetTetromino ();
+		resetTetrominoPos ();
 		if (currentShape < 4) {
 			currentShape++;
 		} else {
@@ -208,7 +223,7 @@ public class PlacementManager : MonoBehaviour {
 		}
 	}
 
-	private void resetTetromino(){
+	private void resetTetrominoPos(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		//It was decided that resetting rotation probably isn't a good idea, unless a block is being placed.
 		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
@@ -230,4 +245,22 @@ public class PlacementManager : MonoBehaviour {
 
 		wireFrameMat.color = Color.black;
 	}
+
+	/*private void checkPlayerRotation(){
+		Vector3 pAngles = player.transform.eulerAngles;
+
+		Debug.Log(pAngles + ", " + playerStartRot);
+
+		if (pAngles.y > playerStartRot.y + 45) {
+			for(int i=0; i<5; i++){
+				wireShapes[i].transform.Rotate (new Vector3(0, 90, 0), Space.World);
+			}
+			playerStartRot.y += 90;
+		} else if(pAngles.y < playerStartRot.y - 45) {
+			for(int i=0; i<5; i++){
+				wireShapes[i].transform.Rotate (new Vector3(0, -90, 0), Space.World);
+			}
+			playerStartRot.y -= 90;
+		}
+	}*/
 }
