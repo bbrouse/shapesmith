@@ -27,6 +27,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update(){
+		if(tetrominosLeft == 0){
+			placementManager.enabled = false;
+		}
+
 		if (Input.GetMouseButtonDown (0)){
 			if(tetrominosLeft > 0){
 				placeTetromino(false);
