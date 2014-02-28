@@ -11,16 +11,16 @@ public class PlacementManager : MonoBehaviour {
 	public LayerMask tetrominoMask;
 	public GameController gameController;
 	public PauseHandler pauseHandler;
-	public GameObject[] shapesArray = new GameObject[5];
+	public GameObject[] shapesArray = new GameObject[7];
 	//public GameObject[] wireShapes = new GameObject[5];
-	public GameObject[] tetrominoArray = new GameObject[5];
+	public GameObject[] tetrominoArray = new GameObject[7];
 	public int currentShape = 0;
 
 	private List<GameObject> childsColliding = new List<GameObject>();
 	private List<GameObject> translatedChildsColliding = new List<GameObject> ();
 	private bool allowPlacement = false;
-	private Vector3[] startPos = new Vector3[5];
-	private Quaternion[] startRot = new Quaternion[5];
+	private Vector3[] startPos = new Vector3[7];
+	private Quaternion[] startRot = new Quaternion[7];
 	private bool randomizing = false;
 	private Material wireFrameMat;
 	private Vector3 translateDirection;
@@ -204,7 +204,7 @@ public class PlacementManager : MonoBehaviour {
 
 	public void switchTetromino(){
 		resetTetrominoPos ();
-		if (currentShape < 4) {
+		if (currentShape < 6) {
 			currentShape++;
 		} else {
 			currentShape = 0;
@@ -213,9 +213,9 @@ public class PlacementManager : MonoBehaviour {
 
 	public void randomizeTetromino(){
 		if(!pauseHandler.paused){
-			int rand = Random.Range (0, 5);
+			int rand = Random.Range (0, 7);
 			while (rand == currentShape) {
-				rand = Random.Range (0, 5);
+				rand = Random.Range (0, 7);
 			}
 
 			resetTetrominoFull ();
@@ -229,7 +229,7 @@ public class PlacementManager : MonoBehaviour {
 		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
 	}
 
-	private void resetTetrominoFull(){
+	public void resetTetrominoFull(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
 	}

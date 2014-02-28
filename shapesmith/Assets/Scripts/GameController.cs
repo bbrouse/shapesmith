@@ -27,6 +27,11 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update(){
+		if(tetrominosLeft == 0){
+			placementManager.resetTetrominoFull();
+			placementManager.enabled = false;
+		}
+
 		if (Input.GetMouseButtonDown (0)){
 			if(tetrominosLeft > 0){
 				placeTetromino(false);
@@ -37,12 +42,20 @@ public class GameController : MonoBehaviour {
 			placementManager.switchTetromino();
 		}
 		
-		if (Input.GetKeyDown ("q")) {
+		if (Input.GetKeyDown ("left shift")) {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
 		}
 
-		if (Input.GetKeyDown ("e")) {
+		if(Input.GetAxis("Mouse ScrollWheel") > 0){
+			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, -90);
+		}
+
+		if(Input.GetAxis("Mouse ScrollWheel") < 0){
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
+		}
+
+		if (Input.GetKeyDown ("z")) {
+			GetComponent<CameraZoom>().toggleZoom();
 		}
 	}
 
