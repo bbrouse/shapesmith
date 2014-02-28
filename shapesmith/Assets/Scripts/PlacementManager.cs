@@ -15,6 +15,7 @@ public class PlacementManager : MonoBehaviour {
 	//public GameObject[] wireShapes = new GameObject[5];
 	public GameObject[] tetrominoArray = new GameObject[7];
 	public int currentShape = 0;
+	public wireframeOffsethandler wireframeOffset;
 
 	private List<GameObject> childsColliding = new List<GameObject>();
 	private List<GameObject> translatedChildsColliding = new List<GameObject> ();
@@ -63,10 +64,13 @@ public class PlacementManager : MonoBehaviour {
 			if((hitInfo.collider.GetType() == typeof(MeshCollider) || hitInfo.collider.GetType() == typeof(BoxCollider)) && isCornerHit(position, hitInfo.point)){
 				//We don't want to place the placeholder object because we are looking at a cube's corner
 				//We also want to reset the placeholder object if it gets 'stuck' in the last placed object
+				wireframeOffset.projectRays = false;
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
 				//checkPlayerRotation();
+
+				wireframeOffset.projectRays = true;
 
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
@@ -227,11 +231,13 @@ public class PlacementManager : MonoBehaviour {
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		//It was decided that resetting rotation probably isn't a good idea, unless a block is being placed.
 		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
+		wireframeOffset.projectRays = true;
 	}
 
 	private void resetTetrominoFull(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
+		wireframeOffset.projectRays = true;
 	}
 
 	public void checkPlacementAllowed(){
