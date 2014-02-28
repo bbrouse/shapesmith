@@ -48,6 +48,10 @@ public class GameController : MonoBehaviour {
 		if (Input.GetKeyDown ("e")) {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
 		}
+
+		if (Input.GetKeyDown ("z")) {
+			GetComponent<CameraZoom>().toggleZoom();
+		}
 	}
 
 	private void placeTetromino(bool forced){
