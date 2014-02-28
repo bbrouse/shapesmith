@@ -28,41 +28,41 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update(){
-		if(tetrominosLeft == 0){
-			placementManager.resetTetrominoFull();
-			placementManager.enabled = false;
-		}
-
-		if (Input.GetMouseButtonDown (0)){
-			if(tetrominosLeft > 0){
-				placeTetromino(false);
+		if (timerContinue) {
+			if(tetrominosLeft == 0){
+				placementManager.resetTetrominoFull();
+				placementManager.enabled = false;
 			}
-		}
-
-		if (Input.GetKeyDown (KeyCode.Tab) && debugMode) {
-			placementManager.switchTetromino();
-		}
-		
-		if (Input.GetKeyDown (KeyCode.LeftShift)) {
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
-		}
-
-		if(Input.GetAxis("Mouse ScrollWheel") > 0){
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, -90);
-		}
-
-		if(Input.GetAxis("Mouse ScrollWheel") < 0){
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
-		}
-
-		if (Input.GetKeyDown (KeyCode.Z)) {
-			GetComponent<CameraZoom>().toggleZoom();
+			
+			if (Input.GetMouseButtonDown (0)){
+				if(tetrominosLeft > 0){
+					placeTetromino(false);
+				}
+			}
+			
+			if (Input.GetKeyDown (KeyCode.Tab) && debugMode) {
+				placementManager.switchTetromino();
+			}
+			
+			if (Input.GetKeyDown (KeyCode.LeftShift)) {
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
+			}
+			
+			if(Input.GetAxis("Mouse ScrollWheel") > 0){
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, -90);
+			}
+			
+			if(Input.GetAxis("Mouse ScrollWheel") < 0){
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
+			}
+			
+			if (Input.GetKeyDown (KeyCode.Z)) {
+				GetComponent<CameraZoom>().toggleZoom();
+			}
 		}
 
 		if (Input.GetKeyDown (KeyCode.Tab)) {
 			timerContinue = !timerContinue;
-			Debug.Log(timerContinue);
-			GetComponent<HideAndLockCursor>().toggleCursorLock ();
 			GetComponent<InGameMenu>().toggleMenu();
 		}
 	}

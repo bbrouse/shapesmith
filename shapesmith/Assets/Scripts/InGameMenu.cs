@@ -5,31 +5,61 @@ public class InGameMenu : MonoBehaviour {
 
 	public BlurEffect mainCameraBlur;
 	public GameObject guiBackground;
-	private bool paused = false;
+	public PauseHandler pauseHandler;
+	public GameController gameController;
+
+	public GameObject restartText;
+	public GameObject levelSelectText;
+	public GameObject resumeText;
+	public GameObject quitText;
 
 	void Start () {
 		mainCameraBlur = Camera.main.GetComponent<BlurEffect> ();
 	}
 
 	void Update(){
-		if (Input.GetMouseButtonDown (0) && !paused) {
-			Screen.lockCursor = true;		
+		if (Input.GetKeyDown ("p") && gameController.debugMode) {
+			toggleMenu();
 		}
+
 	}
 
 	void OnGUI(){
-		if (paused) {
-			if(GUI.Button(new Rect(10, 10, 100, 60), "Quit Game")){
-				Application.Quit();
+		if (pauseHandler.paused) {
+			//show menu items
+		}
+
+		if (gameController.debugMode && pauseHandler.paused) {
+			GUILayout.Label("Paused!");
+			
+			if(gameController.debugMode){
+				GUILayout.Label("Debug Mode: On");
+			}else{
+				GUILayout.Label("Debug Mode: Off");
+			}
+			
+			if(GUILayout.Button("Resume")){
+				toggleMenu();
+			}
+			
+			if(GUILayout.Button("Toggle Debug Mode")){
+				gameController.debugMode = !gameController.debugMode;
+			}
+			
+			if(GUILayout.Button("Restart Level")){
+				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
 	}
 
 	public void toggleMenu(){
-		paused = !paused;
-		Time.timeScale = (Time.timeScale == 1f) ? 0f : 1f;
+		pauseHandler.togglePause ();
 		mainCameraBlur.enabled = !mainCameraBlur.enabled;
 		guiBackground.guiTexture.enabled = !guiBackground.guiTexture.enabled;
+		restartText.guiText.enabled = !restartText.guiText.enabled;
+		levelSelectText.guiText.enabled = !levelSelectText.guiText.enabled;
+		resumeText.guiText.enabled = !resumeText.guiText.enabled;
+		quitText.guiText.enabled = !quitText.guiText.enabled;
 		//show/hide menu
 	}
 }
