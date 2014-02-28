@@ -229,7 +229,7 @@ public class PlacementManager : MonoBehaviour {
 		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
 	}
 
-	private void resetTetrominoFull(){
+	public void resetTetrominoFull(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
 	}
