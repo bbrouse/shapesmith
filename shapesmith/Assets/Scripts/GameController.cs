@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour {
 	private int tetrominoTimeLeft;
 	private int finalTimeLeft;
 	private bool isLevelCompleted = false;
+	private bool timerContinue = true;
 
 	void Start(){
 		tetrominoTimeLeft = tetrominoTimeLimit;
@@ -38,11 +39,11 @@ public class GameController : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKeyDown ("tab") && debugMode) {
+		if (Input.GetKeyDown (KeyCode.Tab) && debugMode) {
 			placementManager.switchTetromino();
 		}
 		
-		if (Input.GetKeyDown ("left shift")) {
+		if (Input.GetKeyDown (KeyCode.LeftShift)) {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
 		}
 
@@ -54,8 +55,15 @@ public class GameController : MonoBehaviour {
 			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
 		}
 
-		if (Input.GetKeyDown ("z")) {
+		if (Input.GetKeyDown (KeyCode.Z)) {
 			GetComponent<CameraZoom>().toggleZoom();
+		}
+
+		if (Input.GetKeyDown (KeyCode.Tab)) {
+			timerContinue = !timerContinue;
+			Debug.Log(timerContinue);
+			GetComponent<HideAndLockCursor>().toggleCursorLock ();
+			GetComponent<InGameMenu>().toggleMenu();
 		}
 	}
 
@@ -80,27 +88,31 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void tetrominoTimerCountdown(){
-		if (tetrominoTimeLeft == 0) {
-			placeTetromino(true);
-			tetrominoTimeLeft = tetrominoTimeLimit;
+		if (timerContinue) {
+			if (tetrominoTimeLeft == 0) {
+				placeTetromino(true);
+				tetrominoTimeLeft = tetrominoTimeLimit;
+			}
+			else{
+				tetrominoTimeLeft--;
+			}
+			timerText.text = tetrominoTimeLeft.ToString (); 
 		}
-		else{
-			tetrominoTimeLeft--;
-		}
-		timerText.text = tetrominoTimeLeft.ToString (); 
 	}
 
 	private void finalCountdown(){
-		if (finalTimeLeft == 0) {
+		if (timerContinue) {
+			if (finalTimeLeft == 0) {
+				timerText.text = (finalTimeLeft).ToString ();
+				levelFailed();
+				return;
+			}
+			else{
+				finalTimeLeft--;
+			}
+			timerText.color = Color.red;
 			timerText.text = (finalTimeLeft).ToString ();
-			levelFailed();
-			return;
 		}
-		else{
-			finalTimeLeft--;
-		}
-		timerText.color = Color.red;
-		timerText.text = (finalTimeLeft).ToString ();
 	}
 
 	public void levelCompleted(){

@@ -28,6 +28,5 @@ public class HideAndLockCursor : MonoBehaviour {
 		playerMouse.enabled = !playerMouse.enabled;
 		cameraMouse.enabled = !cameraMouse.enabled;
 		placementManager.enabled = !placementManager.enabled;
-		gameController.enabled = !gameController.enabled;
 	}
 }
