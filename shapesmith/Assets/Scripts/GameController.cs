@@ -45,15 +45,15 @@ public class GameController : MonoBehaviour {
 			}
 			
 			if (Input.GetKeyDown (KeyCode.LeftShift)) {
-				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
-			}
-			
-			if(Input.GetAxis("Mouse ScrollWheel") > 0){
 				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, -90);
 			}
 			
+			if(Input.GetAxis("Mouse ScrollWheel") > 0){
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, -90, 0);
+			}
+			
 			if(Input.GetAxis("Mouse ScrollWheel") < 0){
-				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
 			}
 			
 			if (Input.GetKeyDown (KeyCode.Z)) {
