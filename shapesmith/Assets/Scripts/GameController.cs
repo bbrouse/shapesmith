@@ -61,10 +61,10 @@ public class GameController : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.Tab)) {
+		/*if (Input.GetKeyDown (KeyCode.Tab)) {
 			timerContinue = !timerContinue;
 			GetComponent<InGameMenu>().toggleMenu();
-		}
+		}*/
 	}
 
 	private void placeTetromino(bool forced){
