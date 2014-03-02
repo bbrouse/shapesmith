@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour {
 	private int tetrominoTimeLeft;
 	private int finalTimeLeft;
 	private bool isLevelCompleted = false;
+	private bool timerContinue = true;
 
 	void Start(){
 		tetrominoTimeLeft = tetrominoTimeLimit;
@@ -27,26 +28,42 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Input.GetMouseButtonDown (0)){
-			if(tetrominosLeft > 0){
-				placeTetromino(false);
+		if (timerContinue) {
+			if(tetrominosLeft == 0){
+				placementManager.resetTetrominoFull();
+				placementManager.enabled = false;
+			}
+			
+			if (Input.GetMouseButtonDown (0)){
+				if(tetrominosLeft > 0){
+					placeTetromino(false);
+				}
+			}
+			
+			if (Input.GetKeyDown (KeyCode.Tab) && debugMode) {
+				placementManager.switchTetromino();
+			}
+			
+			if (Input.GetKeyDown (KeyCode.LeftShift)) {
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, -90);
+			}
+			
+			if(Input.GetAxis("Mouse ScrollWheel") > 0){
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, -90, 0);
+			}
+			
+			if(Input.GetAxis("Mouse ScrollWheel") < 0){
+				placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
+			}
+			
+			if (Input.GetKeyDown (KeyCode.Z)) {
+				GetComponent<CameraZoom>().toggleZoom();
 			}
 		}
 
-		if (Input.GetKeyDown ("tab") && debugMode) {
-			placementManager.switchTetromino();
-		}
-		
-		if (Input.GetKeyDown ("1")) {
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 90, 0);
-		}
-		
-		if (Input.GetKeyDown ("2")) {
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(90, 0, 0);
-		}
-		
-		if (Input.GetKeyDown ("3")) {
-			placementManager.shapesArray[placementManager.currentShape].gameObject.transform.parent.transform.Rotate(0, 0, 90);
+		if (Input.GetKeyDown (KeyCode.Tab)) {
+			timerContinue = !timerContinue;
+			GetComponent<InGameMenu>().toggleMenu();
 		}
 	}
 
@@ -71,27 +88,31 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void tetrominoTimerCountdown(){
-		if (tetrominoTimeLeft == 0) {
-			placeTetromino(true);
-			tetrominoTimeLeft = tetrominoTimeLimit;
+		if (timerContinue) {
+			if (tetrominoTimeLeft == 0) {
+				placeTetromino(true);
+				tetrominoTimeLeft = tetrominoTimeLimit;
+			}
+			else{
+				tetrominoTimeLeft--;
+			}
+			timerText.text = tetrominoTimeLeft.ToString (); 
 		}
-		else{
-			tetrominoTimeLeft--;
-		}
-		timerText.text = tetrominoTimeLeft.ToString (); 
 	}
 
 	private void finalCountdown(){
-		if (finalTimeLeft == 0) {
+		if (timerContinue) {
+			if (finalTimeLeft == 0) {
+				timerText.text = (finalTimeLeft).ToString ();
+				levelFailed();
+				return;
+			}
+			else{
+				finalTimeLeft--;
+			}
+			timerText.color = Color.red;
 			timerText.text = (finalTimeLeft).ToString ();
-			levelFailed();
-			return;
 		}
-		else{
-			finalTimeLeft--;
-		}
-		timerText.color = Color.red;
-		timerText.text = (finalTimeLeft).ToString ();
 	}
 
 	public void levelCompleted(){

@@ -11,18 +11,20 @@ public class PlacementManager : MonoBehaviour {
 	public LayerMask tetrominoMask;
 	public GameController gameController;
 	public PauseHandler pauseHandler;
-	public GameObject[] shapesArray = new GameObject[5];
-	public GameObject[] tetrominoArray = new GameObject[5];
+	public GameObject[] shapesArray = new GameObject[7];
+	//public GameObject[] wireShapes = new GameObject[5];
+	public GameObject[] tetrominoArray = new GameObject[7];
 	public int currentShape = 0;
 
 	private List<GameObject> childsColliding = new List<GameObject>();
 	private List<GameObject> translatedChildsColliding = new List<GameObject> ();
 	private bool allowPlacement = false;
-	private Vector3[] startPos = new Vector3[5];
-	private Quaternion[] startRot = new Quaternion[5];
+	private Vector3[] startPos = new Vector3[7];
+	private Quaternion[] startRot = new Quaternion[7];
 	private bool randomizing = false;
 	private Material wireFrameMat;
 	private Vector3 translateDirection;
+	//private Vector3 playerStartRot;
 
 	void Start(){
 		for (int i=0; i<startPos.Length; i++) {
@@ -30,6 +32,7 @@ public class PlacementManager : MonoBehaviour {
 			startRot[i] = shapesArray[i].gameObject.transform.rotation;
 		}
 		wireFrameMat = (Material)Resources.Load ("outlineMaterial", typeof(Material));
+		//playerStartRot = player.transform.eulerAngles;
 	}
 
 	void Update () {
@@ -63,6 +66,8 @@ public class PlacementManager : MonoBehaviour {
 			}else if(!allowPlacement){
 				//We don't want to allow placing objects over top of the player or cubes
 			}else{
+				//checkPlayerRotation();
+
 				shapesArray[currentShape].transform.parent.gameObject.transform.position = position;
 
 				checkPlacementAllowed();
@@ -137,7 +142,7 @@ public class PlacementManager : MonoBehaviour {
 			checkPlacementAllowed();
 		}else{
 			allowPlacement = false;
-			resetTetromino ();
+			resetTetrominoPos ();
 		}
 	}
 
@@ -198,8 +203,8 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	public void switchTetromino(){
-		resetTetromino ();
-		if (currentShape < 4) {
+		resetTetrominoPos ();
+		if (currentShape < 6) {
 			currentShape++;
 		} else {
 			currentShape = 0;
@@ -208,9 +213,9 @@ public class PlacementManager : MonoBehaviour {
 
 	public void randomizeTetromino(){
 		if(!pauseHandler.paused){
-			int rand = Random.Range (0, 5);
+			int rand = Random.Range (0, 7);
 			while (rand == currentShape) {
-				rand = Random.Range (0, 5);
+				rand = Random.Range (0, 7);
 			}
 
 			resetTetrominoFull ();
@@ -218,13 +223,13 @@ public class PlacementManager : MonoBehaviour {
 		}
 	}
 
-	private void resetTetromino(){
+	private void resetTetrominoPos(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		//It was decided that resetting rotation probably isn't a good idea, unless a block is being placed.
 		//shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShap
 	}
 
-	private void resetTetrominoFull(){
+	public void resetTetrominoFull(){
 		shapesArray [currentShape].transform.parent.gameObject.transform.position = startPos [currentShape];
 		shapesArray [currentShape].transform.parent.gameObject.transform.rotation = startRot [currentShape];
 	}
@@ -240,4 +245,22 @@ public class PlacementManager : MonoBehaviour {
 
 		wireFrameMat.color = Color.black;
 	}
+
+	/*private void checkPlayerRotation(){
+		Vector3 pAngles = player.transform.eulerAngles;
+
+		Debug.Log(pAngles + ", " + playerStartRot);
+
+		if (pAngles.y > playerStartRot.y + 45) {
+			for(int i=0; i<5; i++){
+				wireShapes[i].transform.Rotate (new Vector3(0, 90, 0), Space.World);
+			}
+			playerStartRot.y += 90;
+		} else if(pAngles.y < playerStartRot.y - 45) {
+			for(int i=0; i<5; i++){
+				wireShapes[i].transform.Rotate (new Vector3(0, -90, 0), Space.World);
+			}
+			playerStartRot.y -= 90;
+		}
+	}*/
 }
