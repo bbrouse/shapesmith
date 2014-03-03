@@ -9,9 +9,6 @@ public class ClickableMenuItem : MonoBehaviour {
 
 	private Action method;
 
-	void Start(){
-	}
-
 	public void setMethodToRun(Action inMethod){
 		method = inMethod;
 	}
