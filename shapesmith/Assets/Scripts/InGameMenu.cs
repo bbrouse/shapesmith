@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class InGameMenu : MonoBehaviour {
@@ -15,6 +16,11 @@ public class InGameMenu : MonoBehaviour {
 
 	void Start () {
 		mainCameraBlur = Camera.main.GetComponent<BlurEffect> ();
+
+		restartText.GetComponent<ClickableMenuItem> ().setMethodToRun (restartLevel);
+		levelSelectText.GetComponent<ClickableMenuItem> ().setMethodToRun (loadLevelSelect);
+		resumeText.GetComponent<ClickableMenuItem> ().setMethodToRun (resumeLevel);
+		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (Application.Quit);
 	}
 
 	void Update(){
@@ -47,12 +53,13 @@ public class InGameMenu : MonoBehaviour {
 			}
 			
 			if(GUILayout.Button("Restart Level")){
-				Application.LoadLevel(Application.loadedLevel);
+				restartLevel();
 			}
 		}
 	}
 
 	public void toggleMenu(){
+		gameController.GetComponent<GameController> ().toggleTimer ();
 		pauseHandler.togglePause ();
 		mainCameraBlur.enabled = !mainCameraBlur.enabled;
 		guiBackground.guiTexture.enabled = !guiBackground.guiTexture.enabled;
@@ -61,5 +68,19 @@ public class InGameMenu : MonoBehaviour {
 		resumeText.guiText.enabled = !resumeText.guiText.enabled;
 		quitText.guiText.enabled = !quitText.guiText.enabled;
 		//show/hide menu
+	}
+
+	public void resumeLevel(){
+		toggleMenu ();
+	}
+
+	public void restartLevel(){
+		toggleMenu ();
+		Application.LoadLevel (Application.loadedLevel);
+	}
+
+	public void loadLevelSelect(){
+		toggleMenu ();
+		gameController.GetComponent<GameController> ().loadMainMenu ();
 	}
 }
