@@ -62,7 +62,6 @@ public class GameController : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.Tab)) {
-			timerContinue = !timerContinue;
 			GetComponent<InGameMenu>().toggleMenu();
 		}
 	}
@@ -168,7 +167,11 @@ public class GameController : MonoBehaviour {
 		return false;
 	}
 
-	private void loadMainMenu(){
+	public void loadMainMenu(){
 		Application.LoadLevel("Main_Menu");
+	}
+
+	public void toggleTimer(){
+		timerContinue = !timerContinue;
 	}
 }
