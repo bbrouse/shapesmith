@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
-	public bool debugMode;
+	public bool tutorialMode;
 	public float tetrominoFallDelay;
 	public PlacementManager placementManager;
 	public int tetrominosLeft;
@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour {
 		tetrominoTimeLeft = tetrominoTimeLimit;
 		finalTimeLeft = finalTimeLimit;
 		tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
-		if(!debugMode){
+		if(!tutorialMode){
 			InvokeRepeating("tetrominoTimerCountdown", 2.0f, 1.0f);
 		}
 	}
@@ -38,10 +38,6 @@ public class GameController : MonoBehaviour {
 				if(tetrominosLeft > 0){
 					placeTetromino(false);
 				}
-			}
-			
-			if (Input.GetKeyDown (KeyCode.Tab) && debugMode) {
-				placementManager.switchTetromino();
 			}
 			
 			if (Input.GetKeyDown (KeyCode.LeftShift)) {
@@ -73,7 +69,7 @@ public class GameController : MonoBehaviour {
 		}
 		else{
 			placementManager.placeTetromino();
-			if(debugMode)
+			if(tutorialMode)
 				return;
 		}
 		timerText.text = (tetrominoTimeLeft).ToString ();

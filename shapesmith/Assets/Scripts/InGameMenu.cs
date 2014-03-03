@@ -18,12 +18,14 @@ public class InGameMenu : MonoBehaviour {
 	}
 
 	void Update(){
+		/*
 		if (Input.GetKeyDown ("p") && gameController.debugMode) {
 			toggleMenu();
 		}
-
+		*/
 	}
 
+	/*
 	void OnGUI(){
 		if (pauseHandler.paused) {
 			//show menu items
@@ -50,7 +52,7 @@ public class InGameMenu : MonoBehaviour {
 				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
-	}
+	}*/
 
 	public void toggleMenu(){
 		pauseHandler.togglePause ();
