@@ -10,10 +10,10 @@ public class mainMenuLevelLock : MonoBehaviour {
 		levels = new int[numLevels];
 
 		for (int i=0; i<levels.Length; i++) {
-			if(PlayerPrefs.GetInt("Level_" + (i+1), -1) == -1){
-				PlayerPrefs.SetInt("Level_" + (i+1), 0);
-			}else if(PlayerPrefs.GetInt("Level_" + (i+1)) == 1){
-				var level = GameObject.Find("Level_" + (i+2));
+			if(PlayerPrefs.GetInt("Beta_Level_" + (i+1), -1) == -1){
+				PlayerPrefs.SetInt("Beta_Level_" + (i+1), 0);
+			}else if(PlayerPrefs.GetInt("Beta_Level_" + (i+1)) == 1){
+				var level = GameObject.Find("Beta_Level_" + (i+2));
 				level.collider.isTrigger = true;
 				level.renderer.material = (Material)Resources.Load("goal", typeof(Material));
 			}
