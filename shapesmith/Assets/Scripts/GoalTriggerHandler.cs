@@ -7,7 +7,7 @@ public class GoalTriggerHandler : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.collider.tag == "Player") {
-			if(Application.loadedLevelName != "Main_Menu"){
+			if(Application.loadedLevelName != "Level_Select"){
 				unlockLevel();
 				gameController.GetComponent<GameController>().levelCompleted();
 			}
