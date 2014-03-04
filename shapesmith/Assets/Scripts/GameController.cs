@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour {
 	public GUIText alertText;
 	public GUIText tetrominosLeftText;
 	public GUIText timerText;
+	public AudioSource placementSound;
+	public AudioSource forcedPlacementSound;
 
 	private int tetrominoTimeLeft;
 	private int finalTimeLeft;
@@ -19,6 +21,8 @@ public class GameController : MonoBehaviour {
 	private bool timerContinue = true;
 
 	void Start(){
+		placementSound = GameObject.Find("Placement Audio").audio;
+		forcedPlacementSound = GameObject.Find("Forced Placement Audio").audio;
 		if(!tutorialMode){
 			tetrominoTimeLeft = tetrominoTimeLimit;
 			finalTimeLeft = finalTimeLimit;
@@ -64,9 +68,11 @@ public class GameController : MonoBehaviour {
 
 	private void placeTetromino(bool forced){
 		if (forced) {
+			forcedPlacementSound.Play();
 			placementManager.placeTetromino();
 		}
 		else{
+			placementSound.Play();
 			placementManager.placeTetromino();
 			if(tutorialMode)
 				return;
