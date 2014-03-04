@@ -67,7 +67,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void placeTetromino(bool forced){
-		if (placementManager.allowPlacement) {
+		if (placementManager.allowPlacement || forced) {
 			if (forced) {
 				forcedPlacementSound.Play();
 				placementManager.placeTetromino();
