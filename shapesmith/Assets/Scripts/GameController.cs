@@ -119,6 +119,7 @@ public class GameController : MonoBehaviour {
 	public void levelCompleted(){
 		CancelInvoke("finalCountdown");
 		CancelInvoke("tetrominoTimerCountdown");
+		GameObject.Find ("3D Gui").SetActive (false);
 		alertText.color = Color.green;
 		alertText.text = "Level Completed";
 		Invoke ("loadMainMenu", 2.0f);
@@ -127,6 +128,7 @@ public class GameController : MonoBehaviour {
 	public void levelFailed(){
 		CancelInvoke("finalCountdown");
 		CancelInvoke("tetrominoTimerCountdown");
+		GameObject.Find ("3D Gui").SetActive (false);
 		alertText.color = Color.red;
 		alertText.text = "Level Failed";
 		Invoke ("loadMainMenu", 2.0f);
