@@ -12,13 +12,13 @@ public class GameController : MonoBehaviour {
 	public GUIText alertText;
 	public GUIText tetrominosLeftText;
 	public GUIText timerText;
-	public AudioSource placementSound;
-	public AudioSource forcedPlacementSound;
 
 	private int tetrominoTimeLeft;
 	private int finalTimeLeft;
 	private bool isLevelCompleted = false;
 	private bool timerContinue = true;
+	private AudioSource placementSound;
+	private AudioSource forcedPlacementSound;
 
 	void Start(){
 		placementSound = GameObject.Find("Placement Audio").audio;
