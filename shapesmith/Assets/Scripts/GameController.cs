@@ -168,7 +168,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void loadMainMenu(){
-		Application.LoadLevel("Main_Menu");
+		Application.LoadLevel("Level_Select");
 	}
 
 	public void toggleTimer(){

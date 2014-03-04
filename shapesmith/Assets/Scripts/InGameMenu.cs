@@ -20,7 +20,7 @@ public class InGameMenu : MonoBehaviour {
 		restartText.GetComponent<ClickableMenuItem> ().setMethodToRun (restartLevel);
 		levelSelectText.GetComponent<ClickableMenuItem> ().setMethodToRun (loadLevelSelect);
 		resumeText.GetComponent<ClickableMenuItem> ().setMethodToRun (resumeLevel);
-		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (Application.Quit);
+		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (quitGame);
 	}
 
 	void Update(){
@@ -82,5 +82,9 @@ public class InGameMenu : MonoBehaviour {
 	public void loadLevelSelect(){
 		toggleMenu ();
 		gameController.GetComponent<GameController> ().loadMainMenu ();
+	}
+
+	public void quitGame(){
+		Application.ExternalEval("window.open('','_self').close()");
 	}
 }
