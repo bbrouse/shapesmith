@@ -7,7 +7,7 @@ public class LevelSelectionHandler : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Player") {
-			Invoke("loadLevel", 1.0f);
+			Invoke("loadLevel", 0.5f);
 		}
 	}
 
