@@ -19,10 +19,10 @@ public class GameController : MonoBehaviour {
 	private bool timerContinue = true;
 
 	void Start(){
-		tetrominoTimeLeft = tetrominoTimeLimit;
-		finalTimeLeft = finalTimeLimit;
-		tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
 		if(!tutorialMode){
+			tetrominoTimeLeft = tetrominoTimeLimit;
+			finalTimeLeft = finalTimeLimit;
+			tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
 			InvokeRepeating("tetrominoTimerCountdown", 2.0f, 1.0f);
 		}
 	}
