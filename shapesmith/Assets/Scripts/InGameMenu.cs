@@ -20,16 +20,18 @@ public class InGameMenu : MonoBehaviour {
 		restartText.GetComponent<ClickableMenuItem> ().setMethodToRun (restartLevel);
 		levelSelectText.GetComponent<ClickableMenuItem> ().setMethodToRun (loadLevelSelect);
 		resumeText.GetComponent<ClickableMenuItem> ().setMethodToRun (resumeLevel);
-		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (Application.Quit);
+		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (quitGame);
 	}
 
 	void Update(){
+		/*
 		if (Input.GetKeyDown ("p") && gameController.debugMode) {
 			toggleMenu();
 		}
-
+		*/
 	}
 
+	/*
 	void OnGUI(){
 		if (pauseHandler.paused) {
 			//show menu items
@@ -56,7 +58,7 @@ public class InGameMenu : MonoBehaviour {
 				restartLevel();
 			}
 		}
-	}
+	}*/
 
 	public void toggleMenu(){
 		gameController.GetComponent<GameController> ().toggleTimer ();
@@ -82,5 +84,9 @@ public class InGameMenu : MonoBehaviour {
 	public void loadLevelSelect(){
 		toggleMenu ();
 		gameController.GetComponent<GameController> ().loadMainMenu ();
+	}
+
+	public void quitGame(){
+		Application.ExternalEval("window.open('','_self').close()");
 	}
 }

@@ -36,22 +36,10 @@ public class PlacementManager : MonoBehaviour {
 	}
 
 	void Update () {
-
-		if (!gameController.debugMode && !randomizing) {
-			randomizing = true;
-			//InvokeRepeating ("randomizeTetromino", 7.5f, 7.5f);
-		}
-
-		if (gameController.debugMode) {
-			randomizing = false;
-			CancelInvoke("randomizeTetromino");
-		}
-
 		allowPlacement = true;
 		Ray placementRay = new Ray (origin.transform.position, origin.transform.forward);
 		RaycastHit hitInfo;
-		
-		Debug.DrawRay (origin.transform.position, origin.transform.forward * maxDistance);
+
 		Physics.Raycast (placementRay, out hitInfo, maxDistance);
 		if (Physics.Raycast (placementRay, out hitInfo, maxDistance, environmentMask | tetrominoMask)) {
 			Vector3 position = hitInfo.point;
