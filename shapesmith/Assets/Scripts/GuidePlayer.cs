@@ -9,7 +9,6 @@ public class GuidePlayer : MonoBehaviour {
 		
 	void Update () {
 		reference.transform.LookAt (target.transform.position);
-		//transform.rotation = Quaternion.FromToRotation(playerCamera.transform.forward, reference.transform.forward);
 		transform.rotation = Quaternion.Inverse (playerCamera.transform.rotation) * reference.transform.rotation;
 	}
 }

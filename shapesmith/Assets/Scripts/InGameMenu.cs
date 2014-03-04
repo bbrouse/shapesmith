@@ -23,43 +23,6 @@ public class InGameMenu : MonoBehaviour {
 		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (quitGame);
 	}
 
-	void Update(){
-		/*
-		if (Input.GetKeyDown ("p") && gameController.debugMode) {
-			toggleMenu();
-		}
-		*/
-	}
-
-	/*
-	void OnGUI(){
-		if (pauseHandler.paused) {
-			//show menu items
-		}
-
-		if (gameController.debugMode && pauseHandler.paused) {
-			GUILayout.Label("Paused!");
-			
-			if(gameController.debugMode){
-				GUILayout.Label("Debug Mode: On");
-			}else{
-				GUILayout.Label("Debug Mode: Off");
-			}
-			
-			if(GUILayout.Button("Resume")){
-				toggleMenu();
-			}
-			
-			if(GUILayout.Button("Toggle Debug Mode")){
-				gameController.debugMode = !gameController.debugMode;
-			}
-			
-			if(GUILayout.Button("Restart Level")){
-				restartLevel();
-			}
-		}
-	}*/
-
 	public void toggleMenu(){
 		gameController.GetComponent<GameController> ().toggleTimer ();
 		pauseHandler.togglePause ();

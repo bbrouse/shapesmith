@@ -13,7 +13,7 @@ public class mainMenuLevelLock : MonoBehaviour {
 			if(PlayerPrefs.GetInt("Beta_Level_" + (i+1), -1) == -1){
 				PlayerPrefs.SetInt("Beta_Level_" + (i+1), 0);
 			}else if(PlayerPrefs.GetInt("Beta_Level_" + (i+1)) == 1){
-				var level = GameObject.Find("Beta_Level_" + (i+2));
+				GameObject level = GameObject.Find("Beta_Level_" + (i+2));
 				level.collider.isTrigger = true;
 				level.renderer.material = (Material)Resources.Load("goal", typeof(Material));
 			}
