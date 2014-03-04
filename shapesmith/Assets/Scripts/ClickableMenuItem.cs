@@ -14,17 +14,14 @@ public class ClickableMenuItem : MonoBehaviour {
 	}
 
 	void OnMouseEnter(){
-		Debug.Log("Mouse entered");
 		guiText.color = hoverColor;
 	}
 
 	void OnMouseExit(){
-		Debug.Log("Mouse exited");
 		guiText.color = standardColor;
 	}
 
 	void OnMouseUpAsButton () {
-		Debug.Log ("Text Clicked");
 		method ();
 	}
 }
