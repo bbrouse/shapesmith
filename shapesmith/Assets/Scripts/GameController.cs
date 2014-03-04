@@ -67,25 +67,28 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void placeTetromino(bool forced){
-		if (forced) {
-			forcedPlacementSound.Play();
-			placementManager.placeTetromino();
+		if (placementManager.allowPlacement) {
+			if (forced) {
+				forcedPlacementSound.Play();
+				placementManager.placeTetromino();
+			}
+			else{
+				placementSound.Play();
+				placementManager.placeTetromino();
+				if(tutorialMode)
+					return;
+			}
+			timerText.text = (tetrominoTimeLeft).ToString ();
+			tetrominoTimeLeft = tetrominoTimeLimit;
+			tetrominosLeft--;
+			tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
+			if (tetrominosLeft == 0) {
+				CancelInvoke("tetrominoTimerCountdown");
+				InvokeRepeating("finalCountdown", 0.0f, 1.0f);
+			}
+			placementManager.randomizeTetromino ();
+
 		}
-		else{
-			placementSound.Play();
-			placementManager.placeTetromino();
-			if(tutorialMode)
-				return;
-		}
-		timerText.text = (tetrominoTimeLeft).ToString ();
-		tetrominoTimeLeft = tetrominoTimeLimit;
-		tetrominosLeft--;
-		tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
-		if (tetrominosLeft == 0) {
-			CancelInvoke("tetrominoTimerCountdown");
-			InvokeRepeating("finalCountdown", 0.0f, 1.0f);
-		}
-		placementManager.randomizeTetromino ();
 	}
 
 	private void tetrominoTimerCountdown(){
