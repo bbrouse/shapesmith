@@ -51,7 +51,8 @@ public class InGameMenu : MonoBehaviour {
 
 	public void quitGame(){
 		pauseHandler.togglePause ();
+		Screen.lockCursor = false;
+		PlayerPrefs.DeleteAll ();
 		Application.LoadLevel ("Main_Menu");
-		Application.ExternalEval("window.open('','_self').close()");
 	}
 }
