@@ -50,6 +50,8 @@ public class InGameMenu : MonoBehaviour {
 	}
 
 	public void quitGame(){
+		pauseHandler.togglePause ();
+		Application.LoadLevel ("Main_Menu");
 		Application.ExternalEval("window.open('','_self').close()");
 	}
 }
