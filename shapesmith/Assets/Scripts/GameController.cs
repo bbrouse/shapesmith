@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
 	public bool tutorialMode;
+	public bool mainMenuMode = false;
 	public float tetrominoFallDelay;
 	public PlacementManager placementManager;
 	public int tetrominosLeft;
@@ -27,21 +28,27 @@ public class GameController : MonoBehaviour {
 		tetrominoTimeLimit = settings.tetrominoTimeLimit;
 		finalTimeLimit = settings.finalTimeLimit;
 
-		placementSound = GameObject.Find("Placement Audio").audio;
-		forcedPlacementSound = GameObject.Find("Forced Placement Audio").audio;
-		if(!tutorialMode){
-			tetrominoTimeLeft = tetrominoTimeLimit;
-			finalTimeLeft = finalTimeLimit;
-			tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
-			InvokeRepeating("tetrominoTimerCountdown", 2.0f, 1.0f);
-		}
-
 		Camera.main.audio.clip = settings.backgroundAudio;
 		Camera.main.audio.Play ();
+
+		try{
+			placementSound = GameObject.Find("Placement Audio").audio;
+			forcedPlacementSound = GameObject.Find("Forced Placement Audio").audio;
+
+			if(!tutorialMode){
+				tetrominoTimeLeft = tetrominoTimeLimit;
+				finalTimeLeft = finalTimeLimit;
+				tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
+				InvokeRepeating("tetrominoTimerCountdown", 2.0f, 1.0f);
+			}
+		}
+		catch(System.Exception e){
+			Debug.Log ("Caught Exception: " + e.Message);
+		}
 	}
 
 	void Update(){
-		if (timerContinue) {
+		if (timerContinue && !mainMenuMode) {
 			if(tetrominosLeft == 0){
 				placementManager.resetTetrominoFull();
 				placementManager.enabled = false;
@@ -70,7 +77,7 @@ public class GameController : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.Tab)) {
+		if (Input.GetKeyDown (KeyCode.Tab) && !mainMenuMode) {
 			GetComponent<InGameMenu>().toggleMenu();
 		}
 	}
