@@ -35,6 +35,9 @@ public class GameController : MonoBehaviour {
 			tetrominosLeftText.text = "Tetrominos: " + tetrominosLeft;
 			InvokeRepeating("tetrominoTimerCountdown", 2.0f, 1.0f);
 		}
+
+		Camera.main.audio.clip = settings.backgroundAudio;
+		Camera.main.audio.Play ();
 	}
 
 	void Update(){
