@@ -12,9 +12,9 @@ public class GameController : MonoBehaviour {
 	public GUIText alertText;
 	public GUIText tetrominosLeftText;
 	public GUIText timerText;
+	public int tetrominoTimeLeft;
+	public int finalTimeLeft;
 
-	private int tetrominoTimeLeft;
-	private int finalTimeLeft;
 	private bool isLevelCompleted = false;
 	private bool timerContinue = true;
 	private AudioSource placementSound;
