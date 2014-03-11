@@ -21,6 +21,12 @@ public class GameController : MonoBehaviour {
 	private AudioSource forcedPlacementSound;
 
 	void Start(){
+		LevelSettings settings = GameObject.Find ("Level Settings").GetComponent<LevelSettings> ();
+		tetrominosLeft = settings.numberOfTetrominos;
+		tetrominoFallDelay = settings.tetrominoFallDelay;
+		tetrominoTimeLimit = settings.tetrominoTimeLimit;
+		finalTimeLimit = settings.finalTimeLimit;
+
 		placementSound = GameObject.Find("Placement Audio").audio;
 		forcedPlacementSound = GameObject.Find("Forced Placement Audio").audio;
 		if(!tutorialMode){
