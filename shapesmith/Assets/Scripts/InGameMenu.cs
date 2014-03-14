@@ -13,6 +13,7 @@ public class InGameMenu : MonoBehaviour {
 	public GameObject levelSelectText;
 	public GameObject resumeText;
 	public GameObject quitText;
+	public Camera guiCamera;
 
 	void Start () {
 		mainCameraBlur = Camera.main.GetComponent<BlurEffect> ();
@@ -21,9 +22,11 @@ public class InGameMenu : MonoBehaviour {
 		levelSelectText.GetComponent<ClickableMenuItem> ().setMethodToRun (loadLevelSelect);
 		resumeText.GetComponent<ClickableMenuItem> ().setMethodToRun (resumeLevel);
 		quitText.GetComponent<ClickableMenuItem> ().setMethodToRun (quitGame);
+		guiCamera = GameObject.Find ("3D Gui Camera").camera;
 	}
 
 	public void toggleMenu(){
+		guiCamera.depth = -guiCamera.depth;
 		gameController.GetComponent<GameController> ().toggleTimer ();
 		pauseHandler.togglePause ();
 		mainCameraBlur.enabled = !mainCameraBlur.enabled;
